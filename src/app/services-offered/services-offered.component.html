@@ -1,0 +1,19 @@
+<div class="container">
+  <h1 class="page-header">Services Offered</h1>
+
+  <div class="service-row">
+    <div class="service-card" *ngFor="let service of services">
+      <div class="image-wrapper">
+        <img
+          [src]="service.iconPath"
+          [alt]="service.altText"
+          class="service-image"
+        />
+        <div class="overlay-text">
+          <p class="description">{{ service.description }}</p>
+          <h3 class="black-text">{{ service.title }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

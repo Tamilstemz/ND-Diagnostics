@@ -1,0 +1,316 @@
+.overlay-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 40px;
+}
+
+/* Logo Styling */
+.nav-logo .second-logo,
+.second-logo {
+  height: 110px;
+  width: auto; /* Automatically scales width based on image ratio */
+  cursor: pointer;
+  position: static;
+  z-index: auto;
+  object-fit: contain;
+}
+
+
+
+/* Navigation List - Center */
+.overlay-nav-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.overlay-nav-list li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+
+.overlay-nav-list li.active a {
+  border-bottom: 2px solid white; 
+}
+
+/* Right CTA Button */
+.nav-cta .book-appointment-btn, 
+.book-appointment-btn {
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+  position: static;
+  z-index: 1100;
+}
+
+.book-appointment-btn:hover,
+.book-appointment-btn:focus {
+  color: black;
+  outline: none;
+}
+
+.book-appointment-btn i {
+  font-size: 1.5rem;
+  vertical-align: middle;
+}
+
+/* Hero Section */
+.second-nav-carousel {
+  height: 100vh; /* or adjust to 80vh, 90vh as needed */
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Carousel Base */
+.carousel-inner {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.carousel-item {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  transition: opacity 1s ease-in-out;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers container without distortion */
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#carouselBackground.carousel {
+  height: 100%;
+  width: 100%;
+}
+
+
+
+.carousel-fade .carousel-item {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.carousel-fade .carousel-item.active {
+  opacity: 1;
+  position: relative;
+  z-index: 0;
+}
+
+/* Overlay Grid */
+.overlay-color {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+    linear-gradient(rgba(10, 20, 40, 0.45), rgba(10, 20, 40, 0.38));
+  background-size: 150px 150px, 150px 150px, 100% 100%;
+  background-repeat: repeat, repeat, no-repeat;
+  background-position: 0 0, 0 0, 0 0;
+  z-index: 1;
+}
+
+/* Animated Circles */
+.animated-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.circle-one {
+  width: 350px;
+  height: 350px;
+  top: -400px;
+  left: 170px;
+  background-color: rgba(240, 248, 255, 0.4);
+  z-index: 2;
+  animation-name: moveDownFromTop;
+  animation-duration: 4s;
+  animation-delay: 3s;
+}
+
+.circle-two {
+  width: 450px;
+  height: 450px;
+  top: 70px;
+  left: 20px;
+  background-color: rgba(32, 117, 173, 0.75);
+  z-index: 2;
+  animation-name: moveRightAndStopTopLeft;
+  animation-duration: 3s;
+  animation-delay: 0s;
+}
+
+/* Content Inside Circle */
+.overlay-content {
+  z-index: 3;
+  max-width: 90%;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+  padding-top: 100px;
+  margin-left: -20px;
+}
+
+.text-colorcircle {
+  color: antiquewhite;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  text-decoration: underline;
+  text-decoration-color: antiquewhite;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.tagline {
+  color: white;
+  font-size: 3rem;
+  font-weight: 550;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.request-appointment-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background-color: rgb(241 103 36);
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.request-appointment-btn:hover,
+.request-appointment-btn:focus {
+  background-color: white;
+  color: rgb(241 103 36);
+  outline: none;
+}
+
+/* Animations */
+@keyframes moveDownFromTop {
+  0% {
+    top: -400px;
+    opacity: 0.8;
+  }
+  90% {
+    top: -100px;
+    opacity: 1;
+  }
+  100% {
+    top: -100px;
+    opacity: 1;
+  }
+}
+
+@keyframes moveRightAndStopTopLeft {
+  0% {
+    left: -650px;
+    top: 70px;
+    opacity: 0.8;
+  }
+  90% {
+    left: 20px;
+    top: 70px;
+    opacity: 1;
+  }
+  100% {
+    left: 20px;
+    top: 70px;
+    opacity: 1;
+  }
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+
+  .nav-logo .second-logo,
+  .second-logo {
+    height: 50px;
+    width: 120px;
+  }
+  
+  .second-nav-carousel {
+    height: 400px;
+  }
+
+  .carousel-img {
+    object-fit: cover;
+  }
+
+  .circle-two,
+  .circle-one {
+    width: 300px;
+    height: 300px;
+  }
+
+  .overlay-content {
+    padding-top: 120px;
+    font-size: 1rem;
+  }
+
+  .tagline {
+    font-size: 1.8rem;
+  }
+
+  .request-appointment-btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+

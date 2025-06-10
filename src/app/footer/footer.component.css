@@ -1,0 +1,136 @@
+/* Fullscreen Map Section */
+.full-map-section {
+  width: 100%;
+  height: 250px; /* Adjust height as needed */
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.full-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Footer Styles */
+.footer {
+  background: linear-gradient(rgba(10, 20, 40, 0.8), rgba(10, 20, 40, 0.8));
+  color: #ddd; 
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 0.5rem;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+}
+
+.footer .container-fluid {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.footer > .container-fluid > .row > div {
+  flex: 1 1 220px; /* Responsive column widths */
+  min-width: 220px;
+}
+
+.footer h6 {
+  color: #fff;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.footer p,
+.footer li {
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
+
+.footer a {
+  color: #66b2ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover,
+.footer a.link-hover:hover {
+  color: #a3d1ff;
+  text-decoration: underline;
+}
+
+/* Quick links list style */
+.quick-links {
+  list-style: disc; /* Show bullets */
+  padding-left: 1.25rem; /* Indent list for bullets */
+  margin: 0;
+}
+
+.quick-links li {
+  margin-bottom: 0.4rem;
+}
+
+/* QR image styling */
+.qr-img {
+  max-width: 100px;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+/* Footer bottom line */
+.footer hr.border-light {
+  border-color: #444;
+  margin: 0.5rem 0;
+  border-width: 1px 0 0 0;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 0.8rem;
+  color: #777;
+  padding: 0 1rem 0.75rem;
+}
+
+.footer-bottom p {
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.footer-bottom img {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 30px;
+}
+
+
+
+/* Responsive for small devices */
+@media (max-width: 768px) {
+  .footer .row {
+    flex-direction: column;
+  }
+  .footer > .container-fluid > .row > div {
+    min-width: 100%;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

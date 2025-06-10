@@ -1,0 +1,120 @@
+/* General Section Styling */
+#Book-Appointment {
+  padding: 2rem 1rem;
+}
+
+#Book-Appointment h1 {
+  display: inline-block;
+  padding-bottom: 0.25rem;
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  font-weight: 500 !important;
+}
+
+/* Form Labels and Inputs */
+.form-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-label.small {
+  font-size: 0.85rem;
+}
+
+.form-control,
+.form-select {
+  font-size: 0.9rem;
+}
+
+.form-control-sm,
+.form-select-sm {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.5rem;
+  height: auto;
+}
+
+.required-star {
+  color: red;
+  margin-left: 2px;
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+}
+
+/* Group Booking Section */
+.group-booking-section {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.group-booking-section h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.ApplicantNum {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Checkbox */
+.form-check-input {
+  margin-top: 0.3rem;
+  margin-right: 0.5rem;
+}
+
+/* Grid spacing */
+.row.g-3 > .col-md-2 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .col-md-2,
+  .col-md-3,
+  .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  #Book-Appointment h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Highlighting invalid fields */
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback.d-block {
+  display: block;
+}
+
+/* Button Styling (optional if needed) */
+button[type="submit"] {
+  margin-top: 1.5rem;
+  background-color: rgb(241 103 36);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.3rem;
+}
+
+button[type="submit"]:hover {
+  background-color: white;
+  color: rgb(241 103 36);
+}

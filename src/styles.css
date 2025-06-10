@@ -1,0 +1,55 @@
+/* styles.css */
+*{
+  font-family: 'Barlow Condensed', sans-serif;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth; 
+}
+
+
+
+/* Smooth scroll margin if navbar overlaps */
+#Book-Appointment,
+#Top-page,
+#about-us,
+#services,
+#footer {
+  scroll-margin-top: 70px; 
+}
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  scrollbar-width: none;      
+  -ms-overflow-style: none; 
+}
+
+body::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, and Edge */
+}
+
+/* Match navbar height */
+
+/* body {
+  padding-top: 70px; 
+} */  
+
+@media (max-width: 576px) {
+  /* .fixed-top-css {
+    height: 60px;
+  } */
+
+  /* body {
+    padding-top: 60px;
+  } */
+}
+

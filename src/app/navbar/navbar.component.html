@@ -1,0 +1,48 @@
+<section class="second-nav-carousel position-relative">
+
+ <!-- Menu inside overlay, top center -->
+
+<nav  class="overlay-nav">
+  <div class="nav-container">
+    <!-- Left: Logo -->
+    <div class="nav-logo">
+      <img src="/assets/IndiaLogo-01.png" alt="logo" class="second-logo" />
+    </div>
+
+    <!-- Center: Navigation -->
+    <ul class="overlay-nav-list">
+      <li [class.active]="activeSection === 'Top-page'">
+        <a href="#" (click)="navigateAndScroll('Top-page', $event)">Home</a>
+      </li>
+      <li [class.active]="activeSection === 'about-us'">
+        <a href="#" (click)="navigateAndScroll('about-us', $event)">About Us</a>
+      </li>
+      <li [class.active]="activeSection === 'services'">
+        <a href="#" (click)="navigateAndScroll('services', $event)">Services Offered</a>
+      </li>
+      <li [class.active]="activeSection === 'footer'">
+        <a href="#" (click)="navigateAndScroll('footer', $event)">Contact Us</a>
+      </li>
+
+       <li [class.active]="activeSection === 'Book-Appointment'">
+        <a  href="#" (click)="navigateAndScroll('Book-Appointment', $event)">Book Appointment</a>
+      </li>
+
+      <li [class.active]="activeSection === 'Documents-Required'">
+        <a href="#" (click)="navigateAndScroll('Documents-Required', $event)">Documents Required</a>
+      </li>
+    </ul>
+
+
+    <!-- Right: Book Appointment Button -->
+    <!-- <div class="nav-cta">
+      <a href="/BookAppointment" class="book-appointment-btn" title="Book Appointment">
+       Book Appointment
+      </a>
+    </div> -->
+
+  </div>
+</nav>
+
+
+</section>

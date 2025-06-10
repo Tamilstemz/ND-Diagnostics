@@ -1,0 +1,15 @@
+/* frontpage.component.css */
+
+/* Optional: Style tweaks specific to front page only */
+/* main {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+} */
+
+/* Prevent unintended overflow hiding */
+:host {
+  display: block;
+  overflow: visible;
+}
+
+/* Add any other frontpage-specific layout fixes here */
