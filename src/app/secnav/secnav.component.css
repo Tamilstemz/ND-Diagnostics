@@ -134,6 +134,16 @@
   top: 0;
   left: 0;
 }
+#carouselBackground {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none;
+}
+
+#carouselBackground.show-carousel {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 #carouselBackground.carousel {
   height: 100%;

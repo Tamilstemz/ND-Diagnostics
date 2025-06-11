@@ -70,6 +70,21 @@ export class SecnavComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+ngOnInit(): void {
+  if (isPlatformBrowser(this.platformId)) {
+    const totalDelay = 5000; // Adjust based on your animation timing
+
+    setTimeout(() => {
+      const carouselEl = document.getElementById('carouselBackground');
+      if (carouselEl) {
+        carouselEl.classList.add('show-carousel');
+      }
+    }, totalDelay);
+  }
+}
+
+
+
   activesetsection(sectionId: string): void {
     this.activeSection = sectionId;
   }
