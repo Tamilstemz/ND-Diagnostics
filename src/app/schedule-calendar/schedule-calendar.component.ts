@@ -120,167 +120,167 @@ export class ScheduleCalendarComponent implements OnInit {
       patientName: ['', Validators.required],
     });
   }
-  @Input() slots: any[] = [];
+  @Input() timeSlots: TimeSlot[] = [];
   slots1: { time: string; available: boolean; booked: boolean }[] = [];
   slotsData: {
     [date: string]: { time: string; available: boolean; booked: boolean }[];
   } = {};
-  timeSlots: TimeSlot[] = [
-    {
-      id: 7930,
-      slot: {
-        id: 1456,
-        center: {
-          id: 174,
-          name: 'Australian Visa Medical Examination Centre',
-          country: {
-            id: 109,
-            name: 'AUSTRALIA',
-          },
-          city: {
-            id: 509,
-            name: 'Maroochydore',
-          },
-          state: 271,
-          timezone: 'Australia/Queensland',
-          code: 'AVMEC',
-        },
-        date: '2025-06-11',
-        status: 1,
-        created_on: '2025-06-09T18:27:58.305541',
-        created_ip: '13.215.112.134',
-        modified_on: '2025-06-09T18:27:58.305306',
-        modified_ip: null,
-        created_by: 2,
-        modified_by: null,
-        application: 1,
-        depart_detail: [
-          {
-            id: 43,
-            name: 'GP',
-            code: 'GP',
-          },
-        ],
-        slottime: [
-          {
-            start_time: '10:00:00',
-            end_time: '18:30:00',
-            available: 5,
-            remaining: 5,
-          },
-        ],
-        available: 5,
-        remaining: 5,
-      },
-      department: {
-        id: 43,
-        name: 'GP',
-        code: 'GP',
-        description: null,
-        status: 1,
-        created_on: '2025-06-09T18:26:54.729430',
-        created_ip: '13.215.112.134',
-        modified_on: '2025-06-09T18:26:54.729032',
-        modified_ip: null,
-        application: 1,
-        created_by: 2,
-        modified_by: null,
-      },
-      start_time: '10:00:00',
-      end_time: '18:30:00',
-      available: 5,
-      remaining: 5,
-      status: 1,
-      department_name: 'GP',
-      department_details: [
-        {
-          department__name: 'GP',
-          department__id: 43,
-        },
-      ],
-      department_status: 1,
-    },
-    {
-      id: 7930,
-      slot: {
-        id: 1456,
-        center: {
-          id: 174,
-          name: 'Australian Visa Medical Examination Centre',
-          country: {
-            id: 109,
-            name: 'AUSTRALIA',
-          },
-          city: {
-            id: 509,
-            name: 'Maroochydore',
-          },
-          state: 271,
-          timezone: 'Australia/Queensland',
-          code: 'AVMEC',
-        },
-        date: '2025-06-12',
-        status: 1,
-        created_on: '2025-06-09T18:27:58.305541',
-        created_ip: '13.215.112.134',
-        modified_on: '2025-06-09T18:27:58.305306',
-        modified_ip: null,
-        created_by: 2,
-        modified_by: null,
-        application: 1,
-        depart_detail: [
-          {
-            id: 43,
-            name: 'GP',
-            code: 'GP',
-          },
-        ],
-        slottime: [
-          {
-            start_time: '10:00:00',
-            end_time: '18:30:00',
-            available: 7,
-            remaining: 5,
-          },
-        ],
-        available: 5,
-        remaining: 5,
-      },
-      department: {
-        id: 43,
-        name: 'GP',
-        code: 'GP',
-        description: null,
-        status: 1,
-        created_on: '2025-06-09T18:26:54.729430',
-        created_ip: '13.215.112.134',
-        modified_on: '2025-06-09T18:26:54.729032',
-        modified_ip: null,
-        application: 1,
-        created_by: 2,
-        modified_by: null,
-      },
-      start_time: '10:00:00',
-      end_time: '18:30:00',
-      available: 5,
-      remaining: 5,
-      status: 1,
-      department_name: 'GP',
-      department_details: [
-        {
-          department__name: 'GP',
-          department__id: 43,
-        },
-      ],
-      department_status: 1,
-    },
-  ];
+  // timeSlots: TimeSlot[] = [
+  //   {
+  //     id: 7930,
+  //     slot: {
+  //       id: 1456,
+  //       center: {
+  //         id: 174,
+  //         name: 'Australian Visa Medical Examination Centre',
+  //         country: {
+  //           id: 109,
+  //           name: 'AUSTRALIA',
+  //         },
+  //         city: {
+  //           id: 509,
+  //           name: 'Maroochydore',
+  //         },
+  //         state: 271,
+  //         timezone: 'Australia/Queensland',
+  //         code: 'AVMEC',
+  //       },
+  //       date: '2025-06-11',
+  //       status: 1,
+  //       created_on: '2025-06-09T18:27:58.305541',
+  //       created_ip: '13.215.112.134',
+  //       modified_on: '2025-06-09T18:27:58.305306',
+  //       modified_ip: null,
+  //       created_by: 2,
+  //       modified_by: null,
+  //       application: 1,
+  //       depart_detail: [
+  //         {
+  //           id: 43,
+  //           name: 'GP',
+  //           code: 'GP',
+  //         },
+  //       ],
+  //       slottime: [
+  //         {
+  //           start_time: '10:00:00',
+  //           end_time: '18:30:00',
+  //           available: 5,
+  //           remaining: 5,
+  //         },
+  //       ],
+  //       available: 5,
+  //       remaining: 5,
+  //     },
+  //     department: {
+  //       id: 43,
+  //       name: 'GP',
+  //       code: 'GP',
+  //       description: null,
+  //       status: 1,
+  //       created_on: '2025-06-09T18:26:54.729430',
+  //       created_ip: '13.215.112.134',
+  //       modified_on: '2025-06-09T18:26:54.729032',
+  //       modified_ip: null,
+  //       application: 1,
+  //       created_by: 2,
+  //       modified_by: null,
+  //     },
+  //     start_time: '10:00:00',
+  //     end_time: '18:30:00',
+  //     available: 5,
+  //     remaining: 5,
+  //     status: 1,
+  //     department_name: 'GP',
+  //     department_details: [
+  //       {
+  //         department__name: 'GP',
+  //         department__id: 43,
+  //       },
+  //     ],
+  //     department_status: 1,
+  //   },
+  //   {
+  //     id: 7930,
+  //     slot: {
+  //       id: 1456,
+  //       center: {
+  //         id: 174,
+  //         name: 'Australian Visa Medical Examination Centre',
+  //         country: {
+  //           id: 109,
+  //           name: 'AUSTRALIA',
+  //         },
+  //         city: {
+  //           id: 509,
+  //           name: 'Maroochydore',
+  //         },
+  //         state: 271,
+  //         timezone: 'Australia/Queensland',
+  //         code: 'AVMEC',
+  //       },
+  //       date: '2025-06-12',
+  //       status: 1,
+  //       created_on: '2025-06-09T18:27:58.305541',
+  //       created_ip: '13.215.112.134',
+  //       modified_on: '2025-06-09T18:27:58.305306',
+  //       modified_ip: null,
+  //       created_by: 2,
+  //       modified_by: null,
+  //       application: 1,
+  //       depart_detail: [
+  //         {
+  //           id: 43,
+  //           name: 'GP',
+  //           code: 'GP',
+  //         },
+  //       ],
+  //       slottime: [
+  //         {
+  //           start_time: '10:00:00',
+  //           end_time: '18:30:00',
+  //           available: 7,
+  //           remaining: 5,
+  //         },
+  //       ],
+  //       available: 5,
+  //       remaining: 5,
+  //     },
+  //     department: {
+  //       id: 43,
+  //       name: 'GP',
+  //       code: 'GP',
+  //       description: null,
+  //       status: 1,
+  //       created_on: '2025-06-09T18:26:54.729430',
+  //       created_ip: '13.215.112.134',
+  //       modified_on: '2025-06-09T18:26:54.729032',
+  //       modified_ip: null,
+  //       application: 1,
+  //       created_by: 2,
+  //       modified_by: null,
+  //     },
+  //     start_time: '10:00:00',
+  //     end_time: '18:30:00',
+  //     available: 5,
+  //     remaining: 5,
+  //     status: 1,
+  //     department_name: 'GP',
+  //     department_details: [
+  //       {
+  //         department__name: 'GP',
+  //         department__id: 43,
+  //       },
+  //     ],
+  //     department_status: 1,
+  //   },
+  // ];
 
   calendarSlotMap: { [key: string]: any[] } = {};
   bookedEvents: CalendarEvent[] = [];
 
   ngOnInit() {
-    console.log('Slots:', this.slots);
+    console.log('Slots:', this.timeSlots);
     this.parseTimeSlotsFromData(this.timeSlots); // <-- Add this
     this.processSlots(this.slots1); // You can remove this if not needed
 
