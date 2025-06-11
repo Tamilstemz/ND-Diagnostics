@@ -1,0 +1,182 @@
+<section>
+  <div class="calendar-container">
+    <!-- Navigation Header -->
+    <div
+      style="
+        border: 1px solid lightgrey;
+        padding: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      "
+    >
+      <div class="calendar-header">
+        <div class="calendar-title">
+          <h2 *ngIf="viewMode === 'month'">{{ getMonthName() }}</h2>
+        </div>
+        <div class="nav-controls">
+          <button class="nav-btn" (click)="goToPrevious()">‹</button>
+          <button class="today-btn" (click)="goToToday()">Today</button>
+          <button class="nav-btn" (click)="goToNext()">›</button>
+        </div>
+      </div>
+
+      <div class="calendar-content">
+        <!-- Month View -->
+        <div *ngIf="viewMode === 'month'" class="month-view">
+          <div class="weekday-headers">
+            <div class="weekday-header">Sun</div>
+            <div class="weekday-header">Mon</div>
+            <div class="weekday-header">Tue</div>
+            <div class="weekday-header">Wed</div>
+            <div class="weekday-header">Thu</div>
+            <div class="weekday-header">Fri</div>
+            <div class="weekday-header">Sat</div>
+          </div>
+
+          <div class="calendar-grid">
+            <div
+              *ngFor="let day of getCalendarDays()"
+              class="calendar-day"
+              [class.other-month]="!isCurrentMonth(day)"
+              [class.today]="isToday(day)"
+              [class.selected]="isSelected(day)"
+              [class.has-event]="hasEvent(day)"
+              (click)="selectDate(day)"
+            >
+              <span class="day-number">{{ day.getDate() }}</span>
+              <div *ngIf="hasEvent(day)" class="event-indicator">
+                <!-- {{ getAvailableCount(day) }} -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Slot Selection Panel -->
+    </div>
+    <div *ngIf="selectedDate" class="time-slot-panel">
+      <h3>{{ selectedDate | date : "fullDate" }}</h3>
+      <div class="time-slots-grid" *ngIf="slots1.length > 0; else noSlots">
+        <button
+          *ngFor="let slot of slots1"
+          class="time-slot-btn"
+          [class.available]="slot.available"
+          (click)="bookTimeSlot(slot, appointmentDialog)"
+        >
+          <span class="slot-time">{{ slot.time }}</span>
+        </button>
+      </div>
+      <ng-template #noSlots>
+        <p style="color: #999; font-style: italic">No slots for this date</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <ng-template #appointmentDialog>
+    <h2 style="text-align: center;" mat-dialog-title>Schedule New Appointment</h2>
+    <mat-dialog-content>
+      <form [formGroup]="appointmentForm">
+        <!-- Personal Info -->
+        <div class="mainregistration" [formGroup]="appointmentForm">
+          <!-- Row 1 -->
+          <div class="form-row">
+            <div class="RegistrationForm">
+              <label>Patient Name<span>:</span></label>
+              <input matInput formControlName="patientName" />
+            </div>
+            <div class="RegistrationForm">
+              <label>Hap ID<span>:</span></label>
+              <input matInput formControlName="hapId" />
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="form-row">
+            <div class="RegistrationForm">
+              <label>Email<span>:</span></label>
+              <input matInput formControlName="email" />
+            </div>
+            <div class="RegistrationForm">
+              <label>Contact Number<span>:</span></label>
+              <input matInput formControlName="contactNumber" />
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="form-row">
+            <div class="RegistrationForm">
+              <label>Alternative Number<span>:</span></label>
+              <input matInput formControlName="alternativeNumber" />
+            </div>
+            <div class="RegistrationForm">
+              <label>Gender<span>:</span></label>
+              <select matNativeControl formControlName="gender">
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="form-row">
+            <div class="RegistrationForm">
+              <label>Age<span>:</span></label>
+              <input matInput formControlName="age" />
+            </div>
+            <div class="RegistrationForm">
+              <label>Visa Category<span>:</span></label>
+              <input matInput formControlName="visaCategory" />
+            </div>
+          </div>
+
+          <!-- Row 5 -->
+          <div class="form-row">
+            <div class="RegistrationForm">
+              <label>Passport No<span>:</span></label>
+              <input matInput formControlName="passportNo" />
+            </div>
+            <div class="RegistrationForm">
+              <label>Payment Preference<span>:</span></label>
+              <select matNativeControl formControlName="paymentPreference">
+                <option value="">Select</option>
+                <option value="creditCard">Pay Full Package Amount</option>
+                <option value="paypal">
+                  Pay Booking Amount (Minimum 300 - 500)
+                </option>
+                <option value="bankTransfer">Choose To Pay At Center</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" style="display: flex; gap: 10px">
+      <button
+        style="
+          height: 40px;
+          width: 85px;
+          border: 1px solid lightgrey;
+          border-radius: 5px;
+        "
+        mat-button
+        (click)="dialogRef.close()"
+      >
+        Cancel
+      </button>
+      <button
+        style="
+          height: 40px;
+          width: 150px;
+          border: 1px solid lightgrey;
+          border-radius: 5px;
+        "
+        mat-flat-button
+        color="primary"
+      >
+        Schedule Appointment
+      </button>
+    </mat-dialog-actions>
+  </ng-template>
+</section>

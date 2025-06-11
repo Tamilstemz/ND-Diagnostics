@@ -1,4 +1,5 @@
 <section id="Book-Appointment" style="padding-top: 90px;">
+<app-schedule-calendar [slots]="availableSlots"></app-schedule-calendar>
 <div class="my-2 bookpagepading">
   <h1>
     Book Your Appointment
@@ -276,7 +277,7 @@
         <div class="invalid-feedback">Passport Number is required.</div>
       </div>
 
-      <!-- <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
         <label for="preferredDateTime" class="form-label small">Preferred Date & Time<span class="required-star">*</span></label>
         <input
           id="preferredDateTime"
@@ -292,7 +293,7 @@
         <div *ngIf="appointmentForm.get('preferredDateTime')?.errors?.['invalidTimeWindow'] && appointmentForm.get('preferredDateTime')?.touched" class="invalid-feedback d-block">
           Time must be between 10:00 AM and 4:00 PM.
         </div>
-      </div> -->
+      </div>
 
       <div class="col-md-2 mb-3">
         <label for="paymentPreference" class="form-label small">Payment Preference<span class="required-star">*</span></label>

@@ -8,12 +8,20 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { environment } from '../../environments/environment';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { ScheduleCalendarComponent } from '../schedule-calendar/schedule-calendar.component';
 
 @Component({
   selector: 'app-book-appointment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    ScheduleCalendarComponent,
+  ],
   templateUrl: './book-appointment.component.html',
   styleUrls: ['./book-appointment.component.css'],
 })
@@ -39,9 +47,9 @@ export class BookAppointmentComponent implements OnInit {
     'Other',
   ];
 
-  times = ['10:00 AM', '11:30 AM', '1:00 PM', '2:30 PM', '4:00 PM']; // no longer needed for datetime-local, but can keep if you want
+  times = ['10:00 AM', '11:30 AM', '1:00 PM', '2:30 PM', '4:00 PM'];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.appointmentForm = this.fb.group({
@@ -90,6 +98,7 @@ export class BookAppointmentComponent implements OnInit {
     this.appointmentForm.get('children')?.valueChanges.subscribe(() => {
       if (this.isGroupBooking) this.addGroupMembers();
     });
+    this.getAvailableSlots();
   }
   get groupMembers(): FormArray {
     return this.appointmentForm.get('groupMembers') as FormArray;
@@ -186,5 +195,40 @@ export class BookAppointmentComponent implements OnInit {
     }, 1500);
   }
 
- 
+  availableSlots: any[] = [];
+  getAvailableSlots(): void {
+    const userdata = {
+      loginname: 'Superadmin',
+      password: '@@@@@@',
+    };
+
+    this.http.post(environment.TOKEN_API, userdata).subscribe(
+      (tokenResponse: any) => {
+        const token = tokenResponse?.token || tokenResponse?.access || '';
+        if (!token) {
+          console.error('No token received.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('application', '1');
+        fetch(environment.AVAILABLE_SLOTS_API, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data.data);
+            this.availableSlots = data.data;
+          })
+          .catch((err) => {
+          });
+      },
+      (tokenError: HttpErrorResponse) => {
+      }
+    );
+  }
 }

@@ -1,14 +1,26 @@
 <section class="second-nav-carousel position-relative">
   <!-- Logo absolutely positioned top-left -->
-   
 
-  <div id="carouselBackground" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+  <div
+    id="carouselBackground"
+    class="carousel slide carousel-fade"
+    data-bs-ride="carousel"
+    data-bs-interval="4000"
+  >
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img src="assets/CarouselImages/new pic1 with bg.png" alt="Image 1" class="carousel-img" />
+        <img
+          src="assets/CarouselImages/new pic1 with bg.png"
+          alt="Image 1"
+          class="carousel-img"
+        />
       </div>
       <div class="carousel-item">
-        <img src="assets/CarouselImages/new pic2 with bg.png" alt="Image 2" class="carousel-img" />
+        <img
+          src="assets/CarouselImages/new pic2 with bg.png"
+          alt="Image 2"
+          class="carousel-img"
+        />
       </div>
     </div>
   </div>
@@ -20,63 +32,62 @@
   <div class="animated-circle circle-two">
     <div class="overlay-content text-center welcome-text">
       <h1 class="text-colorcircle">Welcome to ND Diagnostics</h1>
-      <br>
+      <br />
       <!-- <p class="tagline">DELIVERING HEALTHY & <br> RADIANT SERVICES</p> -->
-       <p class="tagline">Medical Visa &<br> HealthCare Services</p>
-      <br>
-      <a href="/BookAppointment" class="request-appointment-btn">Request An Appointment</a>
+      <p class="tagline">
+        Medical Visa &<br />
+        HealthCare Services
+      </p>
+      <br />
+      <a href="/BookAppointment" class="request-appointment-btn"
+        >Request An Appointment</a
+      >
     </div>
   </div>
 
   <!-- Blue overlay -->
   <div class="overlay-color"></div>
 
- <!-- Menu inside overlay, top center -->
-<!-- <app-navbar></app-navbar> -->
+  <!-- Menu inside overlay, top center -->
+  <!-- <app-navbar></app-navbar> -->
+  <nav #navbarNav class="overlay-nav">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="assets/IndiaLogo-01.png" alt="logo" class="second-logo" />
+      </div>
 
-<nav #navbarNav class="overlay-nav">
-  <div class="nav-container">
+      <ul class="overlay-nav-list">
+        <li [class.active]="activeSection === 'Top-page'">
+          <a href="#" (click)="navigateAndScroll('Top-page', $event)">Home</a>
+        </li>
+        <li [class.active]="activeSection === 'about-us'">
+          <a href="#" (click)="navigateAndScroll('about-us', $event)"
+            >About Us</a
+          >
+        </li>
+        <li [class.active]="activeSection === 'services'">
+          <a href="#" (click)="navigateAndScroll('services', $event)"
+            >Services Offered</a
+          >
+        </li>
+        <li [class.active]="activeSection === 'footer'">
+          <a href="#" (click)="navigateAndScroll('footer', $event)"
+            >Contact Us</a
+          >
+        </li>
 
-    <!-- Left: Logo -->
-    <div class="nav-logo">
-      <img src="/assets/IndiaLogo-01.png" alt="logo" class="second-logo" />
+        <li [class.active]="activeSection === 'Book-Appointment'">
+          <a href="#" (click)="navigateAndScroll('Book-Appointment', $event)"
+            >Book Appointment</a
+          >
+        </li>
+
+        <li [class.active]="activeSection === 'Documents-Required'">
+          <a href="#" (click)="navigateAndScroll('Documents-Required', $event)"
+            >Documents Required</a
+          >
+        </li>
+      </ul>
     </div>
-
-    <!-- Center: Navigation -->
-    <ul class="overlay-nav-list">
-      <li [class.active]="activeSection === 'Top-page'">
-        <a href="#" (click)="navigateAndScroll('Top-page', $event)">Home</a>
-      </li>
-      <li [class.active]="activeSection === 'about-us'">
-        <a href="#" (click)="navigateAndScroll('about-us', $event)">About Us</a>
-      </li>
-      <li [class.active]="activeSection === 'services'">
-        <a href="#" (click)="navigateAndScroll('services', $event)">Services Offered</a>
-      </li>
-      <li [class.active]="activeSection === 'footer'">
-        <a href="#" (click)="navigateAndScroll('footer', $event)">Contact Us</a>
-      </li>
-
-       <li [class.active]="activeSection === 'Book-Appointment'">
-            
-        <a  href="#" (click)="navigateAndScroll('Book-Appointment', $event)">Book Appointment</a>
-      </li>
-
-      <li [class.active]="activeSection === 'Documents-Required'">
-        <a href="#" (click)="navigateAndScroll('Documents-Required', $event)">Documents Required</a>
-      </li>
-    </ul>
-
-
-    <!-- Right: Book Appointment Button -->
-    <!-- <div class="nav-cta">
-      <a href="/BookAppointment" class="book-appointment-btn" title="Book Appointment">
-       Book Appointment
-      </a>
-    </div> -->
-
-  </div>
-</nav>
-
-
+  </nav>
 </section>

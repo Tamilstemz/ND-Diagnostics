@@ -1,11 +1,32 @@
 .overlay-nav {
   position: absolute;
   top: 0;
-  left: 0;
   width: 100%;
+  transition: background-color 0.3s ease;
   z-index: 1000;
 }
 
+.overlay-nav.transparent {
+  background-color: transparent;
+}
+
+.overlay-nav.scrolled {
+  background-color: rgba(0, 0, 0, 0.8); /* You can change this */
+}
+
+.fixed-nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999; /* ensure it's above everything */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.95
+  ); /* optional background for readability */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* optional shadow for visibility */
+}
 
 .nav-container {
   display: flex;
@@ -26,8 +47,6 @@
   z-index: auto;
   object-fit: contain;
 }
-
-
 
 /* Navigation List - Center */
 .overlay-nav-list {
@@ -52,13 +71,12 @@
   border-bottom: 2px solid transparent;
 }
 
-
 .overlay-nav-list li.active a {
-  border-bottom: 2px solid white; 
+  border-bottom: 2px solid white;
 }
 
 /* Right CTA Button */
-.nav-cta .book-appointment-btn, 
+.nav-cta .book-appointment-btn,
 .book-appointment-btn {
   padding: 10px 18px;
   font-weight: 600;
@@ -122,8 +140,6 @@
   width: 100%;
 }
 
-
-
 .carousel-fade .carousel-item {
   opacity: 0;
   position: absolute;
@@ -144,8 +160,11 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px
+    ),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
     linear-gradient(rgba(10, 20, 40, 0.45), rgba(10, 20, 40, 0.38));
   background-size: 150px 150px, 150px 150px, 100% 100%;
@@ -154,12 +173,12 @@
   z-index: 1;
 }
 
-/* Animated Circles */
+/* Base style */
 .animated-circle {
   position: absolute;
   border-radius: 50%;
   opacity: 0.8;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: ease-out;
   animation-fill-mode: forwards;
   display: flex;
   justify-content: center;
@@ -168,18 +187,18 @@
   box-sizing: border-box;
 }
 
+/* Specific circle */
 .circle-one {
   width: 350px;
   height: 350px;
-  top: -400px;
+  top: 0;
   left: 170px;
   background-color: rgba(240, 248, 255, 0.4);
   z-index: 2;
-  animation-name: moveDownFromTop;
+  animation-name: movePartialDown;
   animation-duration: 4s;
-  animation-delay: 3s;
+  /* animation-delay: 1s; */
 }
-
 .circle-two {
   width: 450px;
   height: 450px;
@@ -188,7 +207,7 @@
   background-color: rgba(32, 117, 173, 0.75);
   z-index: 2;
   animation-name: moveRightAndStopTopLeft;
-  animation-duration: 3s;
+  animation-duration: 5s;
   animation-delay: 0s;
 }
 
@@ -242,26 +261,36 @@
   outline: none;
 }
 
-/* Animations */
 @keyframes moveDownFromTop {
   0% {
-    top: -400px;
-    opacity: 0.8;
-  }
-  90% {
-    top: -100px;
-    opacity: 1;
+    transform: translateY(-100vh); /* Start far above the screen */
+    opacity: 0;
   }
   100% {
-    top: -100px;
-    opacity: 1;
+    transform: translateY(0); /* Final position */
+    opacity: 0.8;
+  }
+}
+
+@keyframes movePartialDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  90% {
+    transform: translateY(-87.5px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-77.5px); /* Stop suddenly here */
+    opacity: 0.8;
   }
 }
 
 @keyframes moveRightAndStopTopLeft {
   0% {
     left: -650px;
-    top: 70px;
+    top: 90px;
     opacity: 0.8;
   }
   90% {
@@ -278,13 +307,12 @@
 
 /* Responsive Styling */
 @media (max-width: 768px) {
-
   .nav-logo .second-logo,
   .second-logo {
     height: 50px;
     width: 120px;
   }
-  
+
   .second-nav-carousel {
     height: 400px;
   }
@@ -314,3 +342,65 @@
   }
 }
 
+@media (min-width: 1440px) and (max-width: 2000px) {
+  .nav-container {
+    max-width: 100%;
+  }
+
+  .circle-two {
+    width: 680px;
+    height: 680px;
+  }
+  .circle-one {
+    width: 450px;
+    height: 450px;
+    left: 200px;
+  }
+    .overlay-nav-list a {
+    font-size: 1.4rem !important;
+  }
+
+    .request-appointment-btn {
+    font-size: 1.5rem;
+    padding: 15px 40px;
+  }
+}
+
+@media (min-width: 2000px) and (max-width: 4000px) {
+  .nav-container {
+    max-width: 100%;
+  }
+
+  .nav-logo .second-logo,
+  .second-logo {
+    height: 200px;
+  }
+
+  .overlay-nav-list {
+    gap: 70px;
+  }
+  .overlay-nav-list a {
+    font-size: 2rem !important;
+  }
+
+  .circle-two {
+    width: 900px;
+    height: 900px;
+  }
+  .circle-one {
+    width: 650px;
+    height: 650px;
+    left: 300px;
+  }
+  .text-colorcircle {
+    font-size: 4rem;
+  }
+  .request-appointment-btn {
+    font-size: 3rem;
+    padding: 15px 40px;
+  }
+  .tagline {
+    margin-bottom: 100px;
+    font-size: 4rem;
+  }
+}
