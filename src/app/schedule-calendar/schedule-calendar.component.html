@@ -1,4 +1,4 @@
-<section style="margin-top: 90px">
+<section style="margin-top: 160px">
   <div class="calendar-container">
     <!-- Navigation Header -->
     <div
@@ -154,7 +154,7 @@
             class="time-slot-btn"
             [class.available]="slot.available"
             (click)="bookTimeSlot(slot, appointmentDialog)"
-             [class.selected]="selectedslot?.time == slot.time"
+            [class.selected]="selectedslot?.time == slot.time"
           >
             <span class="slot-time">{{ slot.time }}</span>
           </button>
