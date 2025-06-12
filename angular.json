@@ -15,7 +15,7 @@
           "options": {
             "outputPath": "dist/au-front",
             "index": "src/index.html",
-            "browser": "src/main.ts",    
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -29,6 +29,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/ngx-toastr/toastr.css",
               "src/styles.css"
             ],
             "scripts": [
