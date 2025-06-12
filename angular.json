@@ -16,6 +16,7 @@
             "outputPath": "dist/au-front",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/ND-Diagnostics/",
             "polyfills": [
               "zone.js"
             ],
