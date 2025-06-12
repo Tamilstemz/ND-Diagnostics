@@ -13,7 +13,7 @@ import { filter } from 'rxjs/operators';
 export class FooterComponent {
   currentYear = new Date().getFullYear();
 
-  activeSection: string = 'terms-of-use';
+  activeSection: string = '';
 
   constructor(public router: Router) {}
 

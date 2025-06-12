@@ -31,7 +31,7 @@
   <!-- circle-two with overlay-content inside -->
   <div class="animated-circle circle-two">
     <div class="overlay-content text-center welcome-text">
-      <h1 class="text-colorcircle">Welcome to ND Diagnostics</h1>
+      <h1 id="welcome-title" class="text-colorcircle">Welcome to ND Diagnostics</h1>
       <br />
       <!-- <p class="tagline">DELIVERING HEALTHY & <br> RADIANT SERVICES</p> -->
       <p class="tagline">
@@ -52,8 +52,7 @@
 
   <!-- Menu inside overlay, top center -->
   <!-- <app-navbar></app-navbar> -->
-
-  <nav #navbar  class="overlay-nav" [class.scrolled]="showMainNavbar">
+  <nav #navbar id="second-navbar" class="overlay-nav" [class.scrolled]="showMainNavbar">
     <div class="nav-container">
       <div class="nav-logo">
         <img src="assets/IndiaLogo-01.png" alt="logo" class="second-logo" />
@@ -93,6 +92,5 @@
       </ul>
     </div>
   </nav>
-
 </section>
 
