@@ -16,7 +16,7 @@ export class AppComponent {
 
   get showNavbar(): boolean {
     // List of routes that should show navbar
-    const visibleRoutes = ['/BookAppointment'];  
+    const visibleRoutes = ['/BookAppointment','/TermsOfUse','/PrivacyPolicy'];  
     return visibleRoutes.includes(this.router.url);
   }
 }

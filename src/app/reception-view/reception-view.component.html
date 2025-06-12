@@ -1,16 +1,22 @@
+<!-- ===== Parallax Carousel Section ===== -->
 <section class="second-nav-carousel">
-  <!-- Scrollable wrapper for the images -->
+  <!-- Parallax Background Image -->
+  <div class="parallax-image"></div>
+
+  <!-- Scrollable wrapper (carousel or static) -->
   <div class="scroll-wrapper">
-    <div class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel slide carousel-fade">
       <div class="carousel-inner">
         <div class="carousel-item active position-relative">
-          <img src="assets/reception.png" alt="Image 1" class="carousel-img" />
+          <div class="carousel-img-container">
+            <!-- Optional fallback image or leave empty -->
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Overlay color + caption stays fixed above scroll -->
+  <!-- Overlay Caption -->
   <div class="overlay-color">
     <div class="carousel-caption-overlay text-center text-white">
       <p class="fw-bold">Schedule an Appointment</p>
@@ -18,3 +24,4 @@
     </div>
   </div>
 </section>
+
