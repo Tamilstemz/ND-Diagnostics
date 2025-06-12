@@ -1,91 +1,88 @@
+/* ==== Carousel Section ==== */
 .second-nav-carousel {
   position: relative;
-  max-height: 300px;
-  overflow: visible; 
+  height: 310px;
+  overflow: visible;
 }
 
-/* Scrollable wrapper with fixed height and scroll */
+/* ==== Fixed Background Image ==== */
+.parallax-image {
+  background-image: url('/assets/reception1.png');
+  background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1440px;
+  height: 881px;
+  overflow: hidden;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  z-index: -10; /* ✅ Push far back */
+}
+
+
+/* ==== Scroll Wrapper ==== */
 .scroll-wrapper {
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  position: relative; /* Keep relative for carousel */
+  max-height: 310px;
+  overflow: hidden;
+  position: relative;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
 }
 
-/* Keep carousel and image as is */
+/* ==== Carousel Base Styling ==== */
 .carousel-inner,
 .carousel-item {
   width: 100%;
 }
+
 .carousel-item {
   position: relative;
   transition: opacity 1s ease-in-out;
 }
-.carousel-img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
 
-/* Fade effect */
-.carousel-fade .carousel-item {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.carousel-fade .carousel-item.active {
-  opacity: 1;
-  position: relative;
-  z-index: 0;
-}
-
-/* Overlay styling */
+/* ==== Overlay Styling ==== */
 .overlay-color {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  pointer-events: none;
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 2px, transparent 2px),
-    linear-gradient(rgba(10, 20, 40, 0.45), rgba(10, 20, 40, 0.38));
+    linear-gradient(rgba(10, 20, 40, 0.55), rgba(10, 20, 40, 0.45));
   z-index: 10;
   pointer-events: none;
 }
 
-/* Caption styling - above overlay and clickable */
+/* ==== Caption Styling ==== */
 .carousel-caption-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 20; /* Above overlay */
+  z-index: 20;
   text-align: center;
   color: white;
-  font-size: 2rem;
+  font-size: unset;
   padding: 10px 20px;
   border-radius: 8px;
-  pointer-events: auto; /* so button is clickable */
-  font-size: unset;
+  pointer-events: auto;
 }
 
-.carousel-caption-overlay p{
-  font-size: 4rem; 
+.carousel-caption-overlay p {
+  font-size: 4rem;
   font-weight: 500 !important;
-
 }
 
-
+/* ==== Button Styling ==== */
 .btn-primary {
   position: relative;
   padding: 0.5rem 5rem;
@@ -107,7 +104,6 @@
   width: 0;
   height: 0;
   background: white;
-  /* Removed border-radius for square shape */
   transform: translate(-50%, -50%);
   z-index: -1;
   transition: width 1s ease-out, height 0.4s ease-out;

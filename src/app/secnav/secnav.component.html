@@ -39,18 +39,21 @@
         HealthCare Services
       </p>
       <br />
-      <a href="/BookAppointment" class="request-appointment-btn"
+      <a href="#" (click)="navigateAndScroll('Book-Appointment', $event)" class="request-appointment-btn"
         >Request An Appointment</a
       >
     </div>
   </div>
+
+  <div class="carousel-backdrop"></div>
 
   <!-- Blue overlay -->
   <div class="overlay-color"></div>
 
   <!-- Menu inside overlay, top center -->
   <!-- <app-navbar></app-navbar> -->
-  <nav #navbarNav class="overlay-nav">
+
+  <nav #navbar  class="overlay-nav" [class.scrolled]="showMainNavbar">
     <div class="nav-container">
       <div class="nav-logo">
         <img src="assets/IndiaLogo-01.png" alt="logo" class="second-logo" />
@@ -90,4 +93,6 @@
       </ul>
     </div>
   </nav>
+
 </section>
+

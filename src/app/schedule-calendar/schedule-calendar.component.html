@@ -1,4 +1,4 @@
-<section>
+<section style="margin-top: 90px">
   <div class="calendar-container">
     <!-- Navigation Header -->
     <div
@@ -12,6 +12,35 @@
         <div class="calendar-title">
           <h2 *ngIf="viewMode === 'month'">{{ getMonthName() }}</h2>
         </div>
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <label
+            style="
+              width: 100px;
+              display: flex;
+              /* flex-direction: row; */
+              align-items: center;
+              justify-content: space-between;
+              margin-left: 5px;
+            "
+            >Select Center <span>:</span></label
+          >
+          <select
+            style="
+              padding: 5px;
+              border: 1px solid lightgrey;
+              border-radius: 5px;
+              outline: 1px solid #49beff3b;
+            "
+            (change)="onCenterChange($event)"
+          >
+            <option value="">Select</option>
+
+            <option *ngFor="let center of AvailCenter" [value]="center.code">
+              {{ center.name }}
+            </option>
+          </select>
+        </div>
+
         <div class="nav-controls">
           <button class="nav-btn" (click)="goToPrevious()">‹</button>
           <button class="today-btn" (click)="goToToday()">Today</button>
@@ -40,143 +69,366 @@
               [class.today]="isToday(day)"
               [class.selected]="isSelected(day)"
               [class.has-event]="hasEvent(day)"
-              (click)="selectDate(day)"
+              [class.disabled]="isPastDay(day)"
+              (click)="onDayClick(day)"
             >
               <span class="day-number">{{ day.getDate() }}</span>
-              <div *ngIf="hasEvent(day)" class="event-indicator">
-                <!-- {{ getAvailableCount(day) }} -->
-              </div>
+              <div *ngIf="hasEvent(day)" class="event-indicator"></div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Time Slot Selection Panel -->
     </div>
     <div *ngIf="selectedDate" class="time-slot-panel">
-      <h3>{{ selectedDate | date : "fullDate" }}</h3>
-      <div class="time-slots-grid" *ngIf="slots1.length > 0; else noSlots">
-        <button
-          *ngFor="let slot of slots1"
-          class="time-slot-btn"
-          [class.available]="slot.available"
-          (click)="bookTimeSlot(slot, appointmentDialog)"
-        >
-          <span class="slot-time">{{ slot.time }}</span>
-        </button>
+      <!-- <h3>{{ selectedDate | date: 'fullDate' }}</h3> -->
+      <div style="display: flex; align-items: center; padding: 10px">
+        <label>
+          <input
+            type="radio"
+            name="bookingFor"
+            value="self"
+            [checked]="bookingType === 'self'"
+            (change)="onBookingTypeChange($event)"
+          />
+          Self
+        </label>
+
+        <label style="margin-left: 20px">
+          <input
+            type="radio"
+            name="bookingFor"
+            value="family"
+            [checked]="bookingType === 'family'"
+            (change)="onBookingTypeChange($event)"
+          />
+          Family
+        </label>
       </div>
+
+      <!-- Family Form -->
+      <form
+        [formGroup]="familyForm"
+        *ngIf="bookingType === 'family'"
+        style="display: flex; gap: 20px; padding: 10px"
+      >
+        <div style="display: flex; flex-direction: column">
+          <label for="adults">Adults<span>:</span></label>
+          <select id="adults" formControlName="adults" class="select-style">
+            <option value="">Select</option>
+            <option *ngFor="let num of numberOptions" [value]="num">
+              {{ num }}
+            </option>
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column">
+          <label for="children">Children<span>:</span></label>
+          <select id="children" formControlName="children" class="select-style">
+            <option value="">Select</option>
+            <option *ngFor="let num of numberOptions" [value]="num">
+              {{ num }}
+            </option>
+          </select>
+        </div>
+      </form>
+      <div
+        *ngFor="let dateGroup of upcomingDatesWithSlots"
+        style="
+          background: #d3d3d342;
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 15px;
+        "
+      >
+        <h6 style="opacity: 0.8; margin-bottom: 10px">
+          <i class="fas fa-clock" style="margin-right: 5px"></i>
+          {{ dateGroup.date | date : "fullDate" }}
+        </h6>
+
+        <div
+          class="time-slots-grid"
+          *ngIf="dateGroup.slots.length > 0; else noSlots"
+        >
+          <button
+            *ngFor="let slot of dateGroup.slots"
+            class="time-slot-btn"
+            [class.available]="slot.available"
+            (click)="bookTimeSlot(slot, appointmentDialog)"
+             [class.selected]="selectedslot?.time == slot.time"
+          >
+            <span class="slot-time">{{ slot.time }}</span>
+          </button>
+        </div>
+      </div>
+
       <ng-template #noSlots>
         <p style="color: #999; font-style: italic">No slots for this date</p>
       </ng-template>
     </div>
   </div>
-
-  <ng-template #appointmentDialog>
-    <h2 style="text-align: center;" mat-dialog-title>Schedule New Appointment</h2>
-    <mat-dialog-content>
-      <form [formGroup]="appointmentForm">
-        <!-- Personal Info -->
-        <div class="mainregistration" [formGroup]="appointmentForm">
-          <!-- Row 1 -->
-          <div class="form-row">
-            <div class="RegistrationForm">
-              <label>Patient Name<span>:</span></label>
-              <input matInput formControlName="patientName" />
-            </div>
-            <div class="RegistrationForm">
-              <label>Hap ID<span>:</span></label>
-              <input matInput formControlName="hapId" />
-            </div>
+  <div style="width: 430px">
+    <ng-template #appointmentDialog>
+      <h2
+        style="
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-weight: bold;
+        "
+        mat-dialog-title
+      >
+        Schedule New Appointment
+        <span
+          (click)="dialogRef.close()"
+          style="cursor: pointer; opacity: 0.6; font-size: 15px"
+          >&#10006;</span
+        >
+      </h2>
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          font-weight: bold;
+          font-size: 14px;
+          padding: 10px 20px;
+          gap: 5px;
+        "
+      >
+        <!-- Row 1 -->
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div style="width: 50%">
+            <label style="width: 90px">Selected Date <span>:</span></label>
+            <span>{{ selectedslot?.date | date : "yyyy-MM-dd" }}</span>
           </div>
-
-          <!-- Row 2 -->
-          <div class="form-row">
-            <div class="RegistrationForm">
-              <label>Email<span>:</span></label>
-              <input matInput formControlName="email" />
-            </div>
-            <div class="RegistrationForm">
-              <label>Contact Number<span>:</span></label>
-              <input matInput formControlName="contactNumber" />
-            </div>
-          </div>
-
-          <!-- Row 3 -->
-          <div class="form-row">
-            <div class="RegistrationForm">
-              <label>Alternative Number<span>:</span></label>
-              <input matInput formControlName="alternativeNumber" />
-            </div>
-            <div class="RegistrationForm">
-              <label>Gender<span>:</span></label>
-              <select matNativeControl formControlName="gender">
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Row 4 -->
-          <div class="form-row">
-            <div class="RegistrationForm">
-              <label>Age<span>:</span></label>
-              <input matInput formControlName="age" />
-            </div>
-            <div class="RegistrationForm">
-              <label>Visa Category<span>:</span></label>
-              <input matInput formControlName="visaCategory" />
-            </div>
-          </div>
-
-          <!-- Row 5 -->
-          <div class="form-row">
-            <div class="RegistrationForm">
-              <label>Passport No<span>:</span></label>
-              <input matInput formControlName="passportNo" />
-            </div>
-            <div class="RegistrationForm">
-              <label>Payment Preference<span>:</span></label>
-              <select matNativeControl formControlName="paymentPreference">
-                <option value="">Select</option>
-                <option value="creditCard">Pay Full Package Amount</option>
-                <option value="paypal">
-                  Pay Booking Amount (Minimum 300 - 500)
-                </option>
-                <option value="bankTransfer">Choose To Pay At Center</option>
-              </select>
-            </div>
+          <div style="width: 50%; text-align: right">
+            <label style="width: 90px">Patient Name <span>:</span></label>
+            <span>{{ appointmentForm.value.patientName }}</span>
           </div>
         </div>
-      </form>
-    </mat-dialog-content>
 
-    <mat-dialog-actions align="end" style="display: flex; gap: 10px">
-      <button
-        style="
-          height: 40px;
-          width: 85px;
-          border: 1px solid lightgrey;
-          border-radius: 5px;
-        "
-        mat-button
-        (click)="dialogRef.close()"
-      >
-        Cancel
-      </button>
-      <button
-        style="
-          height: 40px;
-          width: 150px;
-          border: 1px solid lightgrey;
-          border-radius: 5px;
-        "
-        mat-flat-button
-        color="primary"
-      >
-        Schedule Appointment
-      </button>
-    </mat-dialog-actions>
-  </ng-template>
+        <!-- Row 2 -->
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div style="width: 50%">
+            <label style="width: 90px">Selected Slot <span>:</span></label>
+            <span>{{ selectedslot?.time }}</span>
+          </div>
+          <div style="width: 50%; text-align: right">
+            <label style="width: 90px">Passport No <span>:</span></label>
+            <span>{{ appointmentForm.value.passportNo }}</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-dialog-content>
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+          <div *ngIf="stepIndex === 0" class="mainregistration">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Patient Name</label>
+                <input matInput formControlName="patientName" />
+              </div>
+              <div class="form-field">
+                <label>Hap ID</label>
+                <input matInput formControlName="hapId" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Email</label>
+                <input matInput type="email" formControlName="email" />
+              </div>
+              <div class="form-field">
+                <label>Contact Number</label>
+                <input
+                  type="tel"
+                  matInput
+                  formControlName="contactNumber"
+                  maxlength="10"
+                  (input)="onContactInput($event, 'contactNumber')"
+                  (keypress)="allowOnlyDigits($event)"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Alternative Number</label>
+                <input
+                  type="tel"
+                  matInput
+                  formControlName="alternativeNumber"
+                  maxlength="10"
+                  (input)="onContactInput($event, 'alternativeNumber')"
+                  (keypress)="allowOnlyDigits($event)"
+                />
+              </div>
+              <div class="form-field">
+                <label>Gender</label>
+                <select matNativeControl formControlName="gender">
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Age</label>
+                <input
+                  maxlength="3"
+                  matInput
+                  formControlName="age"
+                  (input)="onContactInput($event, 'age')"
+                  (keypress)="allowOnlyDigits($event)"
+                />
+              </div>
+              <div class="form-field">
+                <label>Visa Category</label>
+                <input matInput formControlName="visaCategory" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Passport No</label>
+                <input matInput formControlName="passportNo" />
+              </div>
+              <div class="form-field">
+                <label>Payment Preference</label>
+                <select matNativeControl formControlName="paymentPreference">
+                  <option value="">Select</option>
+                  <option value="creditCard">Pay Full Package Amount</option>
+                  <option value="paypal">
+                    Pay Booking Amount (Minimum 300 - 500)
+                  </option>
+                  <option value="bankTransfer">Choose To Pay At Center</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="stepIndex === 1" class="payment-section">
+            <h4 style="margin-bottom: 10px">Scan the QR code to pay</h4>
+            <div
+              style="
+                display: flex;
+                display: flex;
+                overflow: hidden;
+                justify-content: space-between;
+              "
+            >
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    font-size: 15px;
+                    font-weight: bold;
+                  "
+                >
+                  <label
+                    style="
+                      width: 60px;
+                      align-items: center;
+                      justify-content: space-between;
+                      display: flex;
+                    "
+                    >Service <span>:</span> </label
+                  ><span style="padding: 5px">{{ serviceList[0].name }}</span>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    font-size: 15px;
+                    font-weight: bold;
+                  "
+                >
+                  <label
+                    style="
+                      width: 60px;
+                      align-items: center;
+                      justify-content: space-between;
+                      display: flex;
+                    "
+                    >Price <span>:</span></label
+                  ><span style="padding: 5px">{{ serviceList[0].price }}</span>
+                </div>
+                <div style="margin-top: 20px">
+                  <label>Enter Transaction ID:</label>
+                  <input
+                    matInput
+                    id="TransactionId"
+                    formControlName="TransactionId"
+                  />
+                </div>
+                <!-- <div style="margin-top: 20px">
+                  <label>Enter Transaction ID:</label>
+                  <input matInput formControlName="transactionId" />
+                </div> -->
+              </div>
+              <div style="text-align: center">
+                <img
+                  src="assets/dummy-qr.png"
+                  alt="QR Code"
+                  style="width: 225px; height: 325px"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end" style="display: flex; gap: 10px">
+        <button mat-button (click)="dialogRef.close()" class="today-btn">
+          Cancel
+        </button>
+
+        <button
+          mat-button
+          (click)="prevStep()"
+          [disabled]="stepIndex === 0"
+          class="today-btn"
+        >
+          Prev
+        </button>
+
+        <button
+          *ngIf="stepIndex === 0"
+          mat-button
+          (click)="nextStep()"
+          class="today-btn"
+        >
+          Next
+        </button>
+
+        <button
+          *ngIf="stepIndex === 1"
+          mat-flat-button
+          color="primary"
+          (click)="onSubmit()"
+          style="height: 40px; width: 180px; border-radius: 5px"
+        >
+          Schedule Appointment
+        </button>
+      </mat-dialog-actions>
+    </ng-template>
+  </div>
 </section>

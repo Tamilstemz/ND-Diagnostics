@@ -20,7 +20,6 @@ import { ScheduleCalendarComponent } from '../schedule-calendar/schedule-calenda
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ScheduleCalendarComponent,
   ],
   templateUrl: './book-appointment.component.html',
   styleUrls: ['./book-appointment.component.css'],

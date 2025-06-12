@@ -11,7 +11,8 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { ViewportScroller } from '@angular/common';
+
 
 declare var bootstrap: any;
 
@@ -20,55 +21,102 @@ declare var bootstrap: any;
   standalone: true,
   templateUrl: './secnav.component.html',
   styleUrls: ['./secnav.component.css'],
-  // imports: [NavbarComponent]
 })
 export class SecnavComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('navbarNav', { static: false })
-  navbarNav!: ElementRef<HTMLElement>;
-  @ViewChild('navbarToggler', { static: false })
-  navbarToggler!: ElementRef<HTMLElement>;
+  @ViewChild('navbarNav', { static: false }) navbarNav!: ElementRef<HTMLElement>;
+  @ViewChild('navbarToggler', { static: false }) navbarToggler!: ElementRef<HTMLElement>;
+  @ViewChild('navbar', { static: false }) navbar?: ElementRef<HTMLElement>;
+
 
   activeSection: string = 'Top-page';
-
   collapseInstance: any;
-  isNavbarExpanded = false;
-  isScrolled = false;
-  private outsideClickListener = (event: MouseEvent) =>
-    this.onDocumentClick(event);
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    this.isScrolled = scrollTop > 50; // Adjust this threshold if needed
-  }
-  constructor(
+  showMainNavbar = false;
+  private scrollThreshold = 150;
+  private isDestroyed = false;
+  
+
+
+   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router
   ) {}
 
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId) && this.navbarNav) {
-      // Initialize Bootstrap collapse for navbar
-      this.collapseInstance = new bootstrap.Collapse(
-        this.navbarNav.nativeElement,
-        {
-          toggle: false,
+@HostListener('window:scroll', ['$event'])
+  onWindowScroll(): void {
+
+    console.log('Window scrolled----nooooo',this.platformId,'99999',this.navbar?.nativeElement);
+    
+
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.navbar?.nativeElement) return;
+
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      if (this.isDestroyed) return;
+
+      const scrollPosition = Math.max(
+        window.pageYOffset,
+        document.documentElement.scrollTop,
+        document.body.scrollTop
+      );
+      
+      // Debug logging
+      console.log('Current scroll position:', scrollPosition,'---',this.scrollThreshold);
+
+      if (scrollPosition > this.scrollThreshold) {
+        if (!this.showMainNavbar) {
+          this.showMainNavbar = true;
+          this.navbar?.nativeElement.classList.add('nav-scrolled');
         }
-      );
-
-      // Prevent clicks inside navbar from closing it
-      this.navbarNav.nativeElement.addEventListener('click', (e) =>
-        e.stopPropagation()
-      );
-      // Listen for clicks outside navbar to close it
-      document.addEventListener('click', this.outsideClickListener);
-    }
+      } else {
+        if (this.showMainNavbar) {
+          this.showMainNavbar = false;
+          this.navbar?.nativeElement.classList.remove('nav-scrolled');
+        }
+      }
+    });
   }
 
-  ngOnDestroy(): void {
+  
+
+ ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      document.removeEventListener('click', this.outsideClickListener);
+      // Initial scroll check
+      this.onWindowScroll();
+      
+      if (this.navbarNav) {
+        // Initialize Bootstrap collapse
+        this.collapseInstance = new bootstrap.Collapse(this.navbarNav.nativeElement, {
+          toggle: false
+        });
+
+        // Prevent clicks inside navbar from closing it
+        this.navbarNav.nativeElement.addEventListener('click', (e) => e.stopPropagation());
+        
+    
+      }
     }
   }
+
+   ngOnDestroy(): void {
+    this.isDestroyed = true;
+    if (isPlatformBrowser(this.platformId)) {
+      
+    }
+  }
+
+ngOnInit(): void {
+  if (!isPlatformBrowser(this.platformId)) return;
+
+  const totalDelay = 5000;
+  setTimeout(() => {
+    const carouselEl = document.getElementById('carouselBackground');
+    carouselEl?.classList.add('show-carousel');
+  }, totalDelay);
+}
+
+
+
 
   activesetsection(sectionId: string): void {
     this.activeSection = sectionId;
@@ -113,37 +161,8 @@ export class SecnavComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Toggle collapse on hamburger click
-  toggleCollapse(event: MouseEvent): void {
-    event.stopPropagation();
-    if (!this.collapseInstance) return;
 
-    if (this.isNavbarExpanded) {
-      this.collapseInstance.hide();
-      this.isNavbarExpanded = false;
-    } else {
-      this.collapseInstance.show();
-      this.isNavbarExpanded = true;
-    }
-  }
 
-  // Close navbar when clicking outside
-  private onDocumentClick(event: MouseEvent): void {
-    if (!this.collapseInstance) return;
 
-    const collapseEl = this.navbarNav?.nativeElement;
-    const togglerEl = this.navbarToggler?.nativeElement;
-    const target = event.target as HTMLElement;
 
-    if (!collapseEl || !togglerEl) return;
-
-    const isClickedInsideNavbar = collapseEl.contains(target);
-    const isClickedToggler = togglerEl.contains(target);
-    const isNavbarShown = collapseEl.classList.contains('show');
-
-    if (isNavbarShown && !isClickedInsideNavbar && !isClickedToggler) {
-      this.collapseInstance.hide();
-      this.isNavbarExpanded = false;
-    }
-  }
 }

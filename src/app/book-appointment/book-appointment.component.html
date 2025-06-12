@@ -1,28 +1,27 @@
-<section id="Book-Appointment" style="padding-top: 90px;">
-<app-schedule-calendar [slots]="availableSlots"></app-schedule-calendar>
-<div class="my-2 bookpagepading">
-  <h1>
-    Book Your Appointment
-  </h1>
+<section id="Book-Appointment" style="padding-top: 140px">
+  <!-- <app-schedule-calendar [timeSlots]="availableSlots"></app-schedule-calendar> -->
+  <div class="my-2 bookpagepading">
+    <h1>Book Your Appointment</h1>
 
-  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
-
-    <!-- Row 1 -->
-    <!-- Group Booking Details -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3 d-flex align-items-center">
-        <div class="form-check">
-          <input
-            type="checkbox"
-            id="isGroup"
-            formControlName="isGroup"
-            class="form-check-input"
-          />
-          <label for="isGroup" class="form-check-label">Book for a group?</label>
+    <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+      <!-- Row 1 -->
+      <!-- Group Booking Details -->
+      <div class="row align-items-center mb-3">
+        <div class="col-md-3 d-flex align-items-center">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              id="isGroup"
+              formControlName="isGroup"
+              class="form-check-input"
+            />
+            <label for="isGroup" class="form-check-label"
+              >Book for a group?</label
+            >
+          </div>
         </div>
-      </div>
 
-      <!-- Number of Adults -->
+        <!-- Number of Adults -->
         <div class="col-md-4 mb-3" *ngIf="isGroupBooking">
           <label for="adults" class="form-label">
             Number of Adults<span class="required-star">*</span>
@@ -31,11 +30,18 @@
             id="adults"
             formControlName="adults"
             class="form-control"
-            [class.is-invalid]="appointmentForm.get('adults')?.invalid && appointmentForm.get('adults')?.touched"
+            [class.is-invalid]="
+              appointmentForm.get('adults')?.invalid &&
+              appointmentForm.get('adults')?.touched
+            "
           >
-            <option *ngFor="let num of numberOptions" [value]="num">{{ num }}</option>
+            <option *ngFor="let num of numberOptions" [value]="num">
+              {{ num }}
+            </option>
           </select>
-          <div class="invalid-feedback">Please enter at least 1 adult for group booking.</div>
+          <div class="invalid-feedback">
+            Please enter at least 1 adult for group booking.
+          </div>
         </div>
 
         <!-- Number of Children -->
@@ -47,281 +53,377 @@
             id="children"
             formControlName="children"
             class="form-control"
-            [class.is-invalid]="appointmentForm.get('children')?.invalid && appointmentForm.get('children')?.touched"
+            [class.is-invalid]="
+              appointmentForm.get('children')?.invalid &&
+              appointmentForm.get('children')?.touched
+            "
           >
-          <option value='0' disabled selected hidden>
-            Children (Age should be less than 11 years)
-          </option>
-            <option *ngFor="let num of numberOptions" [value]="num">{{ num }}</option>
+            <option value="0" disabled selected hidden>
+              Children (Age should be less than 11 years)
+            </option>
+            <option *ngFor="let num of numberOptions" [value]="num">
+              {{ num }}
+            </option>
           </select>
           <div class="invalid-feedback">Children count cannot be negative.</div>
         </div>
 
+        <div *ngIf="isGroupBooking" class="group-booking-section">
+          <h5>Group Booking Details</h5>
 
-      <div *ngIf="isGroupBooking" class="group-booking-section">
-      <h5>Group Booking Details</h5>
+          <div formArrayName="groupMembers">
+            <div
+              *ngFor="let member of groupMembers.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <h6 class="ApplicantNum">Applicant {{ i + 1 }}</h6>
 
-      <div formArrayName="groupMembers">
-        <div
-          *ngFor="let member of groupMembers.controls; let i = index"
-          [formGroupName]="i"
-        >
-          <h6 class="ApplicantNum">Applicant {{ i + 1 }}</h6>
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label">
+                    Full Name<span class="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="fullName"
+                    class="form-control"
+                    [class.is-invalid]="
+                      member.get('fullName')?.invalid &&
+                      member.get('fullName')?.touched
+                    "
+                  />
+                  <div class="invalid-feedback">Full Name is required.</div>
+                </div>
 
-          <div class="row g-3">
-            <div class="col-md-2">
-              <label class="form-label">
-                Full Name<span class="required-star">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="fullName"
-                class="form-control"
-                [class.is-invalid]="member.get('fullName')?.invalid && member.get('fullName')?.touched"
-              />
-              <div class="invalid-feedback">Full Name is required.</div>
-            </div>
+                <div class="col-md-2">
+                  <label class="form-label">
+                    Gender<span class="required-star">*</span>
+                  </label>
+                  <select
+                    formControlName="gender"
+                    class="form-select"
+                    [class.is-invalid]="
+                      member.get('gender')?.invalid &&
+                      member.get('gender')?.touched
+                    "
+                  >
+                    <option value="" disabled>Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div class="invalid-feedback">Gender is required.</div>
+                </div>
 
-            <div class="col-md-2">
-              <label class="form-label">
-                Gender<span class="required-star">*</span>
-              </label>
-              <select
-                formControlName="gender"
-                class="form-select"
-                [class.is-invalid]="member.get('gender')?.invalid && member.get('gender')?.touched"
-              >
-                <option value="" disabled>Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-              <div class="invalid-feedback">Gender is required.</div>
-            </div>
+                <div class="col-md-2">
+                  <label class="form-label">
+                    Age<span class="required-star">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    formControlName="age"
+                    class="form-control"
+                    [class.is-invalid]="
+                      member.get('age')?.invalid && member.get('age')?.touched
+                    "
+                  />
+                  <div class="invalid-feedback">Valid Age is required.</div>
+                </div>
 
-            <div class="col-md-2">
-              <label class="form-label">
-                Age<span class="required-star">*</span>
-              </label>
-              <input
-                type="number"
-                min="0"
-                formControlName="age"
-                class="form-control"
-                [class.is-invalid]="member.get('age')?.invalid && member.get('age')?.touched"
-              />
-              <div class="invalid-feedback">Valid Age is required.</div>
-            </div>
+                <div class="col-md-2">
+                  <label class="form-label">
+                    Passport No<span class="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="passportNo"
+                    class="form-control"
+                    [class.is-invalid]="
+                      member.get('passportNo')?.invalid &&
+                      member.get('passportNo')?.touched
+                    "
+                  />
+                  <div class="invalid-feedback">Passport No is required.</div>
+                </div>
 
-            <div class="col-md-2">
-              <label class="form-label">
-                Passport No<span class="required-star">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="passportNo"
-                class="form-control"
-                [class.is-invalid]="member.get('passportNo')?.invalid && member.get('passportNo')?.touched"
-              />
-              <div class="invalid-feedback">Passport No is required.</div>
-            </div>
+                <div class="col-md-2">
+                  <label class="form-label">
+                    HAP ID<span class="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="hapId"
+                    class="form-control"
+                    [class.is-invalid]="
+                      member.get('hapId')?.invalid &&
+                      member.get('hapId')?.touched
+                    "
+                  />
+                  <div class="invalid-feedback">HAP ID is required.</div>
+                </div>
 
-            <div class="col-md-2">
-              <label class="form-label">
-                HAP ID<span class="required-star">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="hapId"
-                class="form-control"
-                [class.is-invalid]="member.get('hapId')?.invalid && member.get('hapId')?.touched"
-              />
-              <div class="invalid-feedback">HAP ID is required.</div>
-            </div>
-
-            <div class="col-md-2">
-              <label for="groupPreferredDateTime{{ i }}" class="form-label">
-                Preferred Date & Time<span class="required-star">*</span>
-              </label>
-              <input
-                type="datetime-local"
-                id="groupPreferredDateTime{{ i }}"
-                formControlName="preferredDateTime"
-                class="form-control"
-                [attr.min]="todayDateTimeLocal"
-                [class.is-invalid]="member.get('preferredDateTime')?.invalid && member.get('preferredDateTime')?.touched"
-              />
-              <div *ngIf="member.get('preferredDateTime')?.invalid && member.get('preferredDateTime')?.touched" class="invalid-feedback d-block">
-                Preferred Appointment Date & Time is required.
+                <div class="col-md-2">
+                  <label for="groupPreferredDateTime{{ i }}" class="form-label">
+                    Preferred Date & Time<span class="required-star">*</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="groupPreferredDateTime{{ i }}"
+                    formControlName="preferredDateTime"
+                    class="form-control"
+                    [attr.min]="todayDateTimeLocal"
+                    [class.is-invalid]="
+                      member.get('preferredDateTime')?.invalid &&
+                      member.get('preferredDateTime')?.touched
+                    "
+                  />
+                  <div
+                    *ngIf="
+                      member.get('preferredDateTime')?.invalid &&
+                      member.get('preferredDateTime')?.touched
+                    "
+                    class="invalid-feedback d-block"
+                  >
+                    Preferred Appointment Date & Time is required.
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          
-        </div>
-      </div>
-    </div>
-
-    </div>
-
-    <!-- Unified Fields Row with 5 fields per row and smaller size -->
-    <div class="row">
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label for="fullName" class="form-label small">Full Name<span class="required-star">*</span></label>
-        <input
-          id="fullName"
-          type="text"
-          formControlName="fullName"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('fullName')?.invalid && appointmentForm.get('fullName')?.touched"
-        />
-        <div class="invalid-feedback">Full Name is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3">
-        <label for="email" class="form-label small">Email<span class="required-star">*</span></label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched"
-        />
-        <div class="invalid-feedback">Valid email is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3">
-        <label for="contactNumber" class="form-label small">Contact Number<span class="required-star">*</span></label>
-        <input
-          id="contactNumber"
-          type="tel"
-          formControlName="contactNumber"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('contactNumber')?.invalid && appointmentForm.get('contactNumber')?.touched"
-        />
-        <div class="invalid-feedback">Contact Number is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3">
-        <label for="alternateContactNumber" class="form-label small">Alternate Number</label>
-        <input
-          id="alternateContactNumber"
-          type="tel"
-          formControlName="alternateContactNumber"
-          class="form-control form-control-sm"
-        />
-      </div>
-
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label for="gender" class="form-label small">Gender<span class="required-star">*</span></label>
-        <select
-          formControlName="gender"
-          class="form-select form-select-sm"
-          [class.is-invalid]="appointmentForm.get('gender')?.invalid && appointmentForm.get('gender')?.touched"
-        >
-          <option value="" disabled>Select</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        <div class="invalid-feedback">Gender is required.</div>
-      </div>
-
-      <!-- Add next row -->
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label class="form-label small">Age<span class="required-star">*</span></label>
-        <input
-          type="number"
-          min="0"
-          formControlName="age"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('age')?.invalid && appointmentForm.get('age')?.touched"
-        />
-        <div class="invalid-feedback">Valid Age is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3">
-        <label for="visaCategory" class="form-label small">Visa Category<span class="required-star">*</span></label>
-        <select
-          id="visaCategory"
-          formControlName="visaCategory"
-          class="form-select form-select-sm"
-          [class.is-invalid]="appointmentForm.get('visaCategory')?.invalid && appointmentForm.get('visaCategory')?.touched"
-        >
-          <option value="" disabled>Select</option>
-          <option *ngFor="let category of visaCategories" [value]="category">{{ category }}</option>
-        </select>
-        <div class="invalid-feedback">Visa Category is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label for="hapId" class="form-label small">HAP ID<span class="required-star">*</span></label>
-        <input
-          id="hapId"
-          type="text"
-          formControlName="hapId"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('hapId')?.invalid && appointmentForm.get('hapId')?.touched"
-        />
-        <div class="invalid-feedback">HAP ID is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label for="passportNo" class="form-label small">Passport No<span class="required-star">*</span></label>
-        <input
-          id="passportNo"
-          type="text"
-          formControlName="passportNo"
-          class="form-control form-control-sm"
-          [class.is-invalid]="appointmentForm.get('passportNo')?.invalid && appointmentForm.get('passportNo')?.touched"
-        />
-        <div class="invalid-feedback">Passport Number is required.</div>
-      </div>
-
-      <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
-        <label for="preferredDateTime" class="form-label small">Preferred Date & Time<span class="required-star">*</span></label>
-        <input
-          id="preferredDateTime"
-          type="datetime-local"
-          formControlName="preferredDateTime"
-          class="form-control form-control-sm"
-          [attr.min]="todayDateTimeLocal"
-          [class.is-invalid]="appointmentForm.get('preferredDateTime')?.invalid && appointmentForm.get('preferredDateTime')?.touched"
-        />
-        <div *ngIf="appointmentForm.get('preferredDateTime')?.errors?.['pastDateTime'] && appointmentForm.get('preferredDateTime')?.touched" class="invalid-feedback d-block">
-          Appointment date/time cannot be in the past.
-        </div>
-        <div *ngIf="appointmentForm.get('preferredDateTime')?.errors?.['invalidTimeWindow'] && appointmentForm.get('preferredDateTime')?.touched" class="invalid-feedback d-block">
-          Time must be between 10:00 AM and 4:00 PM.
         </div>
       </div>
 
-      <div class="col-md-2 mb-3">
-        <label for="paymentPreference" class="form-label small">Payment Preference<span class="required-star">*</span></label>
-        <select
-          id="paymentPreference"
-          formControlName="paymentPreference"
-          class="form-select form-select-sm"
-          [class.is-invalid]="appointmentForm.get('paymentPreference')?.invalid && appointmentForm.get('paymentPreference')?.touched"
-        >
-          <option value="" disabled>Select</option>
-          <option *ngFor="let option of paymentOptions" [value]="option.value">{{ option.label }}</option>
-        </select>
-        <div class="invalid-feedback">Payment Preference is required.</div>
+      <!-- Unified Fields Row with 5 fields per row and smaller size -->
+      <div class="row">
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label for="fullName" class="form-label small"
+            >Full Name<span class="required-star">*</span></label
+          >
+          <input
+            id="fullName"
+            type="text"
+            formControlName="fullName"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('fullName')?.invalid &&
+              appointmentForm.get('fullName')?.touched
+            "
+          />
+          <div class="invalid-feedback">Full Name is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3">
+          <label for="email" class="form-label small"
+            >Email<span class="required-star">*</span></label
+          >
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('email')?.invalid &&
+              appointmentForm.get('email')?.touched
+            "
+          />
+          <div class="invalid-feedback">Valid email is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3">
+          <label for="contactNumber" class="form-label small"
+            >Contact Number<span class="required-star">*</span></label
+          >
+          <input
+            id="contactNumber"
+            type="tel"
+            formControlName="contactNumber"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('contactNumber')?.invalid &&
+              appointmentForm.get('contactNumber')?.touched
+            "
+          />
+          <div class="invalid-feedback">Contact Number is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3">
+          <label for="alternateContactNumber" class="form-label small"
+            >Alternate Number</label
+          >
+          <input
+            id="alternateContactNumber"
+            type="tel"
+            formControlName="alternateContactNumber"
+            class="form-control form-control-sm"
+          />
+        </div>
+
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label for="gender" class="form-label small"
+            >Gender<span class="required-star">*</span></label
+          >
+          <select
+            formControlName="gender"
+            class="form-select form-select-sm"
+            [class.is-invalid]="
+              appointmentForm.get('gender')?.invalid &&
+              appointmentForm.get('gender')?.touched
+            "
+          >
+            <option value="" disabled>Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="invalid-feedback">Gender is required.</div>
+        </div>
+
+        <!-- Add next row -->
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label class="form-label small"
+            >Age<span class="required-star">*</span></label
+          >
+          <input
+            type="number"
+            min="0"
+            formControlName="age"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('age')?.invalid &&
+              appointmentForm.get('age')?.touched
+            "
+          />
+          <div class="invalid-feedback">Valid Age is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3">
+          <label for="visaCategory" class="form-label small"
+            >Visa Category<span class="required-star">*</span></label
+          >
+          <select
+            id="visaCategory"
+            formControlName="visaCategory"
+            class="form-select form-select-sm"
+            [class.is-invalid]="
+              appointmentForm.get('visaCategory')?.invalid &&
+              appointmentForm.get('visaCategory')?.touched
+            "
+          >
+            <option value="" disabled>Select</option>
+            <option *ngFor="let category of visaCategories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+          <div class="invalid-feedback">Visa Category is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label for="hapId" class="form-label small"
+            >HAP ID<span class="required-star">*</span></label
+          >
+          <input
+            id="hapId"
+            type="text"
+            formControlName="hapId"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('hapId')?.invalid &&
+              appointmentForm.get('hapId')?.touched
+            "
+          />
+          <div class="invalid-feedback">HAP ID is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label for="passportNo" class="form-label small"
+            >Passport No<span class="required-star">*</span></label
+          >
+          <input
+            id="passportNo"
+            type="text"
+            formControlName="passportNo"
+            class="form-control form-control-sm"
+            [class.is-invalid]="
+              appointmentForm.get('passportNo')?.invalid &&
+              appointmentForm.get('passportNo')?.touched
+            "
+          />
+          <div class="invalid-feedback">Passport Number is required.</div>
+        </div>
+
+        <div class="col-md-2 mb-3" *ngIf="!isGroupBooking">
+          <label for="preferredDateTime" class="form-label small"
+            >Preferred Date & Time<span class="required-star">*</span></label
+          >
+          <input
+            id="preferredDateTime"
+            type="datetime-local"
+            formControlName="preferredDateTime"
+            class="form-control form-control-sm"
+            [attr.min]="todayDateTimeLocal"
+            [class.is-invalid]="
+              appointmentForm.get('preferredDateTime')?.invalid &&
+              appointmentForm.get('preferredDateTime')?.touched
+            "
+          />
+          <div
+            *ngIf="appointmentForm.get('preferredDateTime')?.errors?.['pastDateTime'] && appointmentForm.get('preferredDateTime')?.touched"
+            class="invalid-feedback d-block"
+          >
+            Appointment date/time cannot be in the past.
+          </div>
+          <div
+            *ngIf="appointmentForm.get('preferredDateTime')?.errors?.['invalidTimeWindow'] && appointmentForm.get('preferredDateTime')?.touched"
+            class="invalid-feedback d-block"
+          >
+            Time must be between 10:00 AM and 4:00 PM.
+          </div>
+        </div>
+
+        <div class="col-md-2 mb-3">
+          <label for="paymentPreference" class="form-label small"
+            >Payment Preference<span class="required-star">*</span></label
+          >
+          <select
+            id="paymentPreference"
+            formControlName="paymentPreference"
+            class="form-select form-select-sm"
+            [class.is-invalid]="
+              appointmentForm.get('paymentPreference')?.invalid &&
+              appointmentForm.get('paymentPreference')?.touched
+            "
+          >
+            <option value="" disabled>Select</option>
+            <option
+              *ngFor="let option of paymentOptions"
+              [value]="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+          <div class="invalid-feedback">Payment Preference is required.</div>
+        </div>
       </div>
-    </div>
 
+      <!-- Buttons -->
+      <div class="row">
+        <div class="col-md-4 mb-2" *ngIf="showProceedButton">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            (click)="handleProceedClick()"
+          >
+            Proceed To Payment
+          </button>
+        </div>
 
-    <!-- Buttons -->
-     <div class="row">
-    <div class="col-md-4 mb-2" *ngIf="showProceedButton">
-      <button  type="submit" class="btn btn-primary" (click)="handleProceedClick()">Proceed To Payment</button>
-    </div>
-
-    <div class="col-md-4 mb-2">
-      <button type="submit" class="btn btn-success">Submit Appointment Request</button>
-    </div>
-    </div>
-
-  </form>
-</div>
+        <div class="col-md-4 mb-2">
+          <button type="submit" class="btn btn-success">
+            Submit Appointment Request
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
 </section>
