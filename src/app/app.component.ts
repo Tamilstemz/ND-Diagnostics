@@ -15,7 +15,8 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   get showNavbar(): boolean {
-    const visibleRoutes = ['/BookAppointment'];  
+    // List of routes that should show navbar
+    const visibleRoutes = ['/BookAppointment','/TermsOfUse','/PrivacyPolicy'];  
     return visibleRoutes.includes(this.router.url);
   }
 }

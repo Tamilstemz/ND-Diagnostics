@@ -1,0 +1,15 @@
+/* Fullscreen Map Section */
+.full-map-section {
+  width: 100%;
+  height: 250px; /* Adjust height as needed */
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.full-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background-color: white;
+}
