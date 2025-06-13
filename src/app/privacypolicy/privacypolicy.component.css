@@ -1,0 +1,80 @@
+#privacy-policy {
+  padding-top: 140px;
+  background-color: #f9f9f9;
+}
+
+#privacy-policy .container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Headers LEFT aligned */
+#privacy-policy h1,
+#privacy-policy h3,
+#privacy-policy h4 {
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+}
+
+/* Text CENTER aligned */
+#privacy-policy p,
+#privacy-policy a {
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* Lists STAY left for readability */
+#privacy-policy ul {
+  text-align: left;
+  padding-left: 1.5rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#privacy-policy ul li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Link Styling */
+#privacy-policy a {
+  color: #007BFF;
+  text-decoration: underline;
+}
+
+/* Emphasis Text */
+#privacy-policy em {
+  color: #555;
+  font-style: italic;
+}
+
+/* Header Styles */
+#privacy-policy h1 {
+  font-size: 2rem;
+}
+
+#privacy-policy h3 {
+  font-size: 1.25rem;
+  margin-top: 30px;
+}
+
+/* Responsive Behavior */
+@media (max-width: 768px) {
+  #privacy-policy .container {
+    padding: 15px 20px;
+  }
+
+  #privacy-policy ul {
+    padding-left: 1.2rem;
+  }
+
+  #privacy-policy p {
+    text-align: justify; /* Optional for mobile readability */
+  }
+}
