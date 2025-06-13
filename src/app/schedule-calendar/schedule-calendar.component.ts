@@ -504,74 +504,74 @@ export class ScheduleCalendarComponent implements OnInit {
     }
     console.log(this.serviceList[0]);
 
-    [
-    {
-        "type": "I",
-        "applicant_number": "",
-        "fullname": "test4",
-        "email": "fsdev4@stemzglobal.com",
-        "contact_number": "+919566755827",
-        "alt_number": "+919569755427",
-        "hap_id": "14254845486",
-        "relationship": "Self",
-        "reference_applicant_number": "",
-        "passport_number": "A1275574367854657",
-        "dob": "15-06-1999",
-        "gender": "Male",
-        "address": "123 Street, City",
-        "transaction_id":"54342635275468",
-        "payment_method":"QR",
-        "transaction_amt":"100",
-        "center":"NDK",
-        "status": 1,
-        "created_by": 1,
-        "slot_booking": [
-            {
-                "action_date": "2025-06-13",
-                "booked_time": "07:00 PM to 08:00 PM",
-                "booking_from": 3,
-                "booking_status": 1,
-                "date_booked": "2025-06-13",
-                "department": "AU",
-                "description": "Test Service",
-                "service_code":["APPT","LAN"]
-            }
-        ]
-    },
-    {
-        "type": "I",
-        "applicant_number": "",
-        "fullname": "Test5",
-        "email": "fsdev4@stemzglobal.com",
-        "contact_number": "+919566555427",
-        "alt_number": "+919566555427",
-        "hap_id": "14254845486",
-        "relationship": "Child",
-        "reference_applicant_number": "",
-        "passport_number": "A825879543896557",
-        "dob": "15-06-1999",
-        "gender": "Male",
-        "address": "123 Street, City",
-        "transaction_id":"5434263527468",
-        "payment_method":"QR",
-        "transaction_amt":"100",
-        "status": 1,
-        "created_by": 1,
-         "center":"NDK",
-        "slot_booking": [
-            {
-                "action_date": "2025-06-13",
-                "booked_time": "07:00 PM to 08:00 PM",
-                "booking_from": 3,
-                "booking_status": 1,
-                "date_booked": "2025-06-13",
-                "department": "AU",
-                "description": "Test Service",
-                "service_code": ["APPT","LAN"]
-            }
-        ]
-    }
-]
+    // [
+    // {
+    //     "type": "I",
+    //     "applicant_number": "",
+    //     "fullname": "test4",
+    //     "email": "fsdev4@stemzglobal.com",
+    //     "contact_number": "+919566755827",
+    //     "alt_number": "+919569755427",
+    //     "hap_id": "14254845486",
+    //     "relationship": "Self",
+    //     "reference_applicant_number": "",
+    //     "passport_number": "A1275574367854657",
+    //     "dob": "15-06-1999",
+    //     "gender": "Male",
+    //     "address": "123 Street, City",
+    //     "transaction_id":"54342635275468",
+    //     "payment_method":"QR",
+    //     "transaction_amt":"100",
+    //     "center":"NDK",
+    //     "status": 1,
+    //     "created_by": 1,
+    //     "slot_booking": [
+    //         {
+    //             "action_date": "2025-06-13",
+    //             "booked_time": "07:00 PM to 08:00 PM",
+    //             "booking_from": 3,
+    //             "booking_status": 1,
+    //             "date_booked": "2025-06-13",
+    //             "department": "AU",
+    //             "description": "Test Service",
+    //             "service_code":["APPT","LAN"]
+    //         }
+    //     ]
+    // },
+    // {
+    //     "type": "I",
+    //     "applicant_number": "",
+    //     "fullname": "Test5",
+    //     "email": "fsdev4@stemzglobal.com",
+    //     "contact_number": "+919566555427",
+    //     "alt_number": "+919566555427",
+    //     "hap_id": "14254845486",
+    //     "relationship": "Child",
+    //     "reference_applicant_number": "",
+    //     "passport_number": "A825879543896557",
+    //     "dob": "15-06-1999",
+    //     "gender": "Male",
+    //     "address": "123 Street, City",
+    //     "transaction_id":"5434263527468",
+    //     "payment_method":"QR",
+    //     "transaction_amt":"100",
+    //     "status": 1,
+    //     "created_by": 1,
+    //      "center":"NDK",
+    //     "slot_booking": [
+    //         {
+    //             "action_date": "2025-06-13",
+    //             "booked_time": "07:00 PM to 08:00 PM",
+    //             "booking_from": 3,
+    //             "booking_status": 1,
+    //             "date_booked": "2025-06-13",
+    //             "department": "AU",
+    //             "description": "Test Service",
+    //             "service_code": ["APPT","LAN"]
+    //         }
+    //     ]
+    // }
+    // ]
 
     var finalDtaa = [
       {
@@ -582,7 +582,7 @@ export class ScheduleCalendarComponent implements OnInit {
         contact_number: formData.contactNumber,
         alt_number: formData.alternativeNumber,
         hap_id: formData.hapId,
-        relationship: "Self",
+        relationship: 'Self',
         reference_applicant_number: '',
         passport_number: formData.passportNo,
         dob: this.formatDate(formData.dob),
@@ -591,7 +591,7 @@ export class ScheduleCalendarComponent implements OnInit {
         transaction_id: formData.TransactionId,
         payment_method: formData.payment_method,
         transaction_amt: this.serviceList[0]?.price,
-        center:this.selectedCenterCode,
+        center: this.selectedCenterCode,
         status: 1,
         created_by: 1,
         slot_booking: [
@@ -617,7 +617,7 @@ export class ScheduleCalendarComponent implements OnInit {
       .subscribe((res: any) => {
         console.log(res.data);
 
-        if (res.appointments.status === "success" && res.data?.length) {
+        if (res.appointments.status === 'success' && res.data?.length) {
           const applicant = res.data[0];
           const applicantNumber = applicant.applicant_number;
           const appointments = applicant.appointments;
