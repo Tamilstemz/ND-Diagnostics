@@ -29,7 +29,7 @@ export class SecnavComponent implements OnInit, AfterViewInit, OnDestroy {
   activeSection: string = 'Top-page';
   collapseInstance: any;
   showMainNavbar = false;
-  private scrollThreshold = 150;
+  
   private isDestroyed = false;
 
   constructor(
@@ -50,8 +50,6 @@ export class SecnavComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Manual scroll trigger
-    this.onWindowScroll();
 
     // Initialize Bootstrap Collapse
     if (this.navbarNav) {
@@ -85,33 +83,6 @@ export class SecnavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('window:scroll', ['$event'])
-  onWindowScroll(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    if (!this.navbar?.nativeElement) return;
-
-    requestAnimationFrame(() => {
-      if (this.isDestroyed) return;
-
-      const scrollPosition = Math.max(
-        window.pageYOffset,
-        document.documentElement.scrollTop,
-        document.body.scrollTop
-      );
-
-      if (scrollPosition > this.scrollThreshold) {
-        if (!this.showMainNavbar) {
-          this.showMainNavbar = true;
-          this.navbar?.nativeElement.classList.add('nav-scrolled');
-        }
-      } else {
-        if (this.showMainNavbar) {
-          this.showMainNavbar = false;
-          this.navbar?.nativeElement.classList.remove('nav-scrolled');
-        }
-      }
-    });
-  }
 
   ngOnDestroy(): void {
     this.isDestroyed = true;
@@ -121,40 +92,44 @@ export class SecnavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeSection = sectionId;
   }
 
-  navigateAndScroll(sectionId: string, event: Event): void {
-    event.preventDefault();
-    this.activeSection = sectionId;
+ navigateAndScroll(sectionId: string, event: Event): void {
+  event.preventDefault();
+  this.activeSection = sectionId;
 
-    // If section is part of a different route
-    if (sectionId === 'Book-Appointment') {
-      this.router.navigate(['/BookAppointment']);
-      return;
-    }
-
-    const scrollToSection = () => {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        el.classList.add('highlighted');
-        setTimeout(() => el.classList.remove('highlighted'), 1000);
-      } else {
-        console.warn('Element not found for id:', sectionId);
-      }
-    };
-
-    if (this.router.url === '/') {
-      setTimeout(scrollToSection, 50);
+  const scrollToSection = () => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.add('highlighted');
+      setTimeout(() => el.classList.remove('highlighted'), 1000);
     } else {
-      const sub = this.router.events
-        .pipe(filter((event) => event instanceof NavigationEnd))
-        .subscribe(() => {
-          setTimeout(() => {
-            scrollToSection();
-            sub.unsubscribe();
-          }, 100);
-        });
-
-      this.router.navigate(['/']);
+      console.warn('Element not found for id:', sectionId);
     }
+  };
+
+  // Navigate if the section is on a different route
+  if (sectionId === 'Book-Appointment') {
+    sectionId = 'singlenavbar';
+    this.router.navigate(['/BookAppointment']).then(() => {
+      setTimeout(scrollToSection, 100);
+    });
   }
+
+  // If already on the home route
+  if (this.router.url === '/') {
+    setTimeout(scrollToSection, 50);
+  } else {
+    const sub = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        setTimeout(() => {
+          scrollToSection();
+          sub.unsubscribe();
+        }, 100);
+      });
+
+    this.router.navigate(['/']);
+  }
+}
+
 }
