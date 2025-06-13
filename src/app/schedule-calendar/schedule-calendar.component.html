@@ -12,7 +12,7 @@
         <div class="calendar-title">
           <h2 *ngIf="viewMode === 'month'">{{ getMonthName() }}</h2>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 5px">
+        <!-- <div style="display: flex; flex-direction: column; gap: 5px">
           <label
             style="
               width: 100px;
@@ -39,7 +39,7 @@
               {{ center.name }}
             </option>
           </select>
-        </div>
+        </div> -->
 
         <div class="nav-controls">
           <button class="nav-btn" (click)="goToPrevious()">‹</button>
@@ -66,6 +66,7 @@
               *ngFor="let day of getCalendarDays()"
               class="calendar-day"
               [class.other-month]="!isCurrentMonth(day)"
+              [ngClass]="{ 'event-indicator': hasEvent(day) }"
               [class.today]="isToday(day)"
               [class.selected]="isSelected(day)"
               [class.has-event]="hasEvent(day)"
@@ -73,97 +74,129 @@
               (click)="onDayClick(day)"
             >
               <span class="day-number">{{ day.getDate() }}</span>
-              <div *ngIf="hasEvent(day)" class="event-indicator"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div *ngIf="selectedDate" class="time-slot-panel">
-      <!-- <h3>{{ selectedDate | date: 'fullDate' }}</h3> -->
-      <div style="display: flex; align-items: center; padding: 10px">
-        <label>
-          <input
-            type="radio"
-            name="bookingFor"
-            value="self"
-            [checked]="bookingType === 'self'"
-            (change)="onBookingTypeChange($event)"
-          />
-          Self
-        </label>
-
-        <label style="margin-left: 20px">
-          <input
-            type="radio"
-            name="bookingFor"
-            value="family"
-            [checked]="bookingType === 'family'"
-            (change)="onBookingTypeChange($event)"
-          />
-          Family
-        </label>
-      </div>
-
-      <!-- Family Form -->
-      <form
-        [formGroup]="familyForm"
-        *ngIf="bookingType === 'family'"
-        style="display: flex; gap: 20px; padding: 10px"
-      >
-        <div style="display: flex; flex-direction: column">
-          <label for="adults">Adults<span>:</span></label>
-          <select id="adults" formControlName="adults" class="select-style">
-            <option value="">Select</option>
-            <option *ngFor="let num of numberOptions" [value]="num">
-              {{ num }}
-            </option>
-          </select>
-        </div>
-
-        <div style="display: flex; flex-direction: column">
-          <label for="children">Children<span>:</span></label>
-          <select id="children" formControlName="children" class="select-style">
-            <option value="">Select</option>
-            <option *ngFor="let num of numberOptions" [value]="num">
-              {{ num }}
-            </option>
-          </select>
-        </div>
-      </form>
-      <div
-        *ngFor="let dateGroup of upcomingDatesWithSlots"
-        style="
-          background: #d3d3d342;
-          padding: 10px;
-          border-radius: 5px;
-          margin-bottom: 15px;
-        "
-      >
-        <h6 style="opacity: 0.8; margin-bottom: 10px">
-          <i class="fas fa-clock" style="margin-right: 5px"></i>
-          {{ dateGroup.date | date : "fullDate" }}
-        </h6>
-
-        <div
-          class="time-slots-grid"
-          *ngIf="dateGroup.slots.length > 0; else noSlots"
+    <div class="time-slot-panel">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <label
+          style="
+            width: 100px;
+            display: flex;
+            /* flex-direction: row; */
+            align-items: center;
+            justify-content: space-between;
+            margin-left: 5px;
+          "
+          >Select Center <span>:</span></label
         >
-          <button
-            *ngFor="let slot of dateGroup.slots"
-            class="time-slot-btn"
-            [class.available]="slot.available"
-            (click)="bookTimeSlot(slot, appointmentDialog)"
-            [class.selected]="selectedslot?.time == slot.time"
-          >
-            <span class="slot-time">{{ slot.time }}</span>
-          </button>
-        </div>
+        <select
+          style="
+            padding: 5px;
+            border: 1px solid lightgrey;
+            border-radius: 5px;
+            outline: 1px solid #49beff3b;
+          "
+          (change)="onCenterChange($event)"
+        >
+          <option value="">Select</option>
+
+          <option *ngFor="let center of AvailCenter" [value]="center.code">
+            {{ center.name }}
+          </option>
+        </select>
       </div>
 
-      <ng-template #noSlots>
-        <p style="color: #999; font-style: italic">No slots for this date</p>
-      </ng-template>
+      <div *ngIf="selectedDate">
+        <div style="display: flex; align-items: center; padding: 10px">
+          <label>
+            <input
+              type="radio"
+              name="bookingFor"
+              value="self"
+              [checked]="bookingType === 'self'"
+              (change)="onBookingTypeChange($event)"
+            />
+            Self
+          </label>
+
+          <label style="margin-left: 20px">
+            <input
+              type="radio"
+              name="bookingFor"
+              value="family"
+              [checked]="bookingType === 'family'"
+              (change)="onBookingTypeChange($event)"
+            />
+            Group
+          </label>
+        </div>
+
+        <form
+          [formGroup]="familyForm"
+          *ngIf="bookingType === 'family'"
+          style="display: flex; gap: 20px; padding: 10px"
+        >
+          <div style="display: flex; flex-direction: column">
+            <label for="adults">Adults<span>:</span></label>
+            <select id="adults" formControlName="adults" class="select-style">
+              <option value="">Select</option>
+              <option *ngFor="let num of numberOptions" [value]="num">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+
+          <div style="display: flex; flex-direction: column">
+            <label for="children">Children<span>:</span></label>
+            <select
+              id="children"
+              formControlName="children"
+              class="select-style"
+            >
+              <option value="">Select</option>
+              <option *ngFor="let num of numberOptions" [value]="num">
+                {{ num }}
+              </option>
+            </select>
+          </div>
+        </form>
+        <div
+          *ngFor="let dateGroup of upcomingDatesWithSlots"
+          style="
+            background: #d3d3d342;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+          "
+        >
+          <h6 style="opacity: 0.8; margin-bottom: 10px">
+            <i class="fas fa-clock" style="margin-right: 5px"></i>
+            {{ dateGroup.date | date : "fullDate" }}
+          </h6>
+
+          <div
+            class="time-slots-grid"
+            *ngIf="dateGroup.slots.length > 0; else noSlots"
+          >
+            <button
+              *ngFor="let slot of dateGroup.slots"
+              class="time-slot-btn"
+              [class.available]="slot.available"
+              (click)="bookTimeSlot(slot, appointmentDialog)"
+              [class.selected]="selectedslot?.time == slot.time"
+            >
+              <span class="slot-time">{{ slot.time }}</span>
+            </button>
+          </div>
+        </div>
+
+        <ng-template #noSlots>
+          <p style="color: #999; font-style: italic">No slots for this date</p>
+        </ng-template>
+      </div>
     </div>
   </div>
   <div style="width: 430px">
@@ -180,7 +213,7 @@
       >
         Schedule New Appointment
         <span
-          (click)="dialogRef.close()"
+          (click)="cancelapptmodal()"
           style="cursor: pointer; opacity: 0.6; font-size: 15px"
           >&#10006;</span
         >
@@ -203,12 +236,27 @@
             align-items: center;
           "
         >
-          <div style="width: 50%">
-            <label style="width: 90px">Selected Date <span>:</span></label>
+          <div style="width: 50%; gap: 10; display: flex; gap: 0.4rem">
+            <label
+              style="display: flex; justify-content: space-between; width: 30%"
+              >Selected Date <span>:</span></label
+            >
             <span>{{ selectedslot?.date | date : "yyyy-MM-dd" }}</span>
           </div>
-          <div style="width: 50%; text-align: right">
-            <label style="width: 90px">Patient Name <span>:</span></label>
+          <div
+            style="
+              width: 50%;
+              display: flex;
+              gap: 0.4rem;
+              text-align: right;
+              display: flex;
+              align-items: flex-start;
+            "
+          >
+            <label
+              style="display: flex; justify-content: space-between; width: 30%"
+              >Patient Name <span>:</span></label
+            >
             <span>{{ appointmentForm.value.patientName }}</span>
           </div>
         </div>
@@ -221,12 +269,26 @@
             align-items: center;
           "
         >
-          <div style="width: 50%">
-            <label style="width: 90px">Selected Slot <span>:</span></label>
+          <div style="width: 50%; display: flex; gap: 0.4rem">
+            <label
+              style="display: flex; justify-content: space-between; width: 30%"
+              >Selected Slot <span>:</span></label
+            >
             <span>{{ selectedslot?.time }}</span>
           </div>
-          <div style="width: 50%; text-align: right">
-            <label style="width: 90px">Passport No <span>:</span></label>
+          <div
+            style="
+              width: 50%;
+              text-align: right;
+              display: flex;
+              align-items: flex-start;
+              gap: 0.4rem;
+            "
+          >
+            <label
+              style="display: flex; justify-content: space-between; width: 30%"
+              >Passport No <span>:</span></label
+            >
             <span>{{ appointmentForm.value.passportNo }}</span>
           </div>
         </div>
@@ -258,7 +320,6 @@
                   matInput
                   formControlName="contactNumber"
                   maxlength="10"
-                  (input)="onContactInput($event, 'contactNumber')"
                   (keypress)="allowOnlyDigits($event)"
                 />
               </div>
@@ -272,7 +333,6 @@
                   matInput
                   formControlName="alternativeNumber"
                   maxlength="10"
-                  (input)="onContactInput($event, 'alternativeNumber')"
                   (keypress)="allowOnlyDigits($event)"
                 />
               </div>
@@ -289,6 +349,17 @@
 
             <div class="form-row">
               <div class="form-field">
+                <label>DOB</label>
+                <input
+                  maxlength="3"
+                  type="date"
+                  matInput
+                  formControlName="dob"
+                  [max]="today"
+                />
+              </div>
+
+              <div class="form-field">
                 <label>Age</label>
                 <input
                   maxlength="3"
@@ -298,10 +369,10 @@
                   (keypress)="allowOnlyDigits($event)"
                 />
               </div>
-              <div class="form-field">
+              <!-- <div class="form-field">
                 <label>Visa Category</label>
                 <input matInput formControlName="visaCategory" />
-              </div>
+              </div> -->
             </div>
 
             <div class="form-row">
@@ -309,7 +380,7 @@
                 <label>Passport No</label>
                 <input matInput formControlName="passportNo" />
               </div>
-              <div class="form-field">
+              <!-- <div class="form-field">
                 <label>Payment Preference</label>
                 <select matNativeControl formControlName="paymentPreference">
                   <option value="">Select</option>
@@ -318,6 +389,13 @@
                     Pay Booking Amount (Minimum 300 - 500)
                   </option>
                   <option value="bankTransfer">Choose To Pay At Center</option>
+                </select>
+              </div> -->
+              <div class="form-field">
+                <label>Payment Method</label>
+                <select matNativeControl formControlName="gender">
+                  <option value="">Select</option>
+                  <option value="QR">QR</option>
                 </select>
               </div>
             </div>
@@ -397,14 +475,14 @@
       </mat-dialog-content>
 
       <mat-dialog-actions align="end" style="display: flex; gap: 10px">
-        <button mat-button (click)="dialogRef.close()" class="today-btn">
+        <button mat-button (click)="cancelapptmodal()" class="today-btn">
           Cancel
         </button>
 
         <button
+          *ngIf="stepIndex !== 0"
           mat-button
           (click)="prevStep()"
-          [disabled]="stepIndex === 0"
           class="today-btn"
         >
           Prev
@@ -422,9 +500,8 @@
         <button
           *ngIf="stepIndex === 1"
           mat-flat-button
-          color="primary"
+          class="today-btn"
           (click)="onSubmit()"
-          style="height: 40px; width: 180px; border-radius: 5px"
         >
           Schedule Appointment
         </button>

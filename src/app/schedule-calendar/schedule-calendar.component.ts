@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 
 interface TimeSlot {
   id: number;
@@ -139,22 +140,21 @@ export class ScheduleCalendarComponent implements OnInit {
   ) {
     this.appointmentForm = this.fb.group({
       patientName: ['', Validators.required],
-      hapId: ['', Validators.required],
+      hapId: [''],
       email: ['', [Validators.required, Validators.email]],
       contactNumber: [
         '',
         [Validators.required, Validators.pattern(/^\d{10}$/)],
       ],
-      alternativeNumber: [
-        '',
-        [Validators.required, Validators.pattern(/^\d{10}$/)],
-      ],
+      alternativeNumber: ['', [Validators.pattern(/^\d{10}$/)]],
       gender: ['', Validators.required],
       age: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      visaCategory: ['', Validators.required],
+      visaCategory: [''],
       passportNo: ['', Validators.required],
-      paymentPreference: ['', Validators.required],
+      paymentPreference: [''],
       TransactionId: '',
+      dob: [''],
+      payment_method: 'QR',
     });
   }
   timeSlots: any[] = [];
@@ -172,6 +172,8 @@ export class ScheduleCalendarComponent implements OnInit {
   });
   accesstoken: string = '';
   serviceList: any[] = [];
+  today: string = new Date().toISOString().split('T')[0];
+
   ngOnInit() {
     console.log('timeSlots:', this.timeSlots);
     this.parseTimeSlotsFromData(this.timeSlots); // <-- Add this
@@ -180,28 +182,29 @@ export class ScheduleCalendarComponent implements OnInit {
       adults: [''],
       children: [''],
     });
-    this.bookedEvents = [
-      { date: '2025-06-15', title: 'Meeting', timeSlot: '11:00 AM' },
-      { date: '2025-06-20', title: 'Appointment', timeSlot: '03:00 PM' },
-    ];
-    this.getAvailableSlots(); // Fetch available slots from API
+    // this.bookedEvents = [
+    //   { date: '2025-06-15', title: 'Meeting', timeSlot: '11:00 AM' },
+    //   { date: '2025-06-20', title: 'Appointment', timeSlot: '03:00 PM' },
+    // ];
+    this.getAvailableSlots();
   }
 
   stepIndex = 0;
   selectedCenterCode: string = '';
+  cancelapptmodal() {
+    this.dialogRef.close();
+    this.selectedslot = null;
+  }
   onCenterChange(event: Event): void {
+    this.upcomingDatesWithSlots = [];
     const selectedCode = (event.target as HTMLSelectElement).value;
     console.log('Selected Center Code:', selectedCode);
-
-    // Optional: find full center details from existing list
+    this.selectedCenterCode = selectedCode;
     const selectedCenter = this.AvailCenter.find(
       (center: any) => center.code === selectedCode
     );
     console.log('Selected Center Details:', selectedCenter);
-
-    // Construct URL with center_code as a query parameter
     const apiUrl = `${environment.AVAILABLE_SERVIVCE_API}&center=${selectedCode}`;
-
     this.http
       .get(apiUrl, {
         headers: { Authorization: `Bearer ${this.accesstoken}` },
@@ -210,27 +213,45 @@ export class ScheduleCalendarComponent implements OnInit {
         console.log('Services for selected center:', res.data);
         this.serviceList = res.data;
       });
+    const formData = new FormData();
+    formData.append('application', '1');
+    formData.append('center', selectedCode);
+    fetch(environment.AVAILABLE_SLOTS_API, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.accesstoken}`,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.data);
+        this.timeSlots = data.data;
+        this.parseTimeSlotsFromData(this.timeSlots);
+        this.processSlots(this.slots1);
+      })
+      .catch((err) => {});
   }
 
   nextStep() {
     const form = this.appointmentForm;
-
-    // Required fields
-    const requiredFields = ['patientName', 'age', 'gender', 'passportNo'];
-
+    const requiredFields = [
+      'patientName',
+      'age',
+      'gender',
+      'passportNo',
+      'email',
+      'contactNumber',
+      'dob',
+    ];
     const missing = requiredFields.filter((field) => {
       const control = form.get(field);
       return !control || control.invalid || !control.value;
     });
-
     if (missing.length > 0) {
-      // Optionally, mark all fields as touched to show validation messages
       missing.forEach((field) => form.get(field)?.markAsTouched());
-
       return;
     }
-
-    // Go to next step
     this.stepIndex = 1;
   }
 
@@ -261,6 +282,7 @@ export class ScheduleCalendarComponent implements OnInit {
     var finalDtaa = [
       {
         type: 'I',
+        applicant_number: '',
         fullname: formData.patientName,
         email: formData.email,
         contact_number: formData.contactNumber,
@@ -269,10 +291,13 @@ export class ScheduleCalendarComponent implements OnInit {
         relationship: this.bookingType,
         reference_applicant_number: '',
         passport_number: formData.passportNo,
-        dob: '15-06-1999',
+        dob: formData.dob,
         gender: formData.gender,
         address: '123 Street, City',
-        trans_id: formData.TransactionId,
+        transaction_id: formData.TransactionId,
+        payment_method: formData.payment_method,
+        transaction_amt: this.serviceList[0]?.price,
+
         status: 1,
         created_by: 1,
         slot_booking: [
@@ -284,9 +309,7 @@ export class ScheduleCalendarComponent implements OnInit {
             date_booked: formatISOToYYYYMMDD(this.selectedslot?.date),
             department: this.serviceList[0]?.department?.name,
             description: this.serviceList[0]?.description,
-            patient_name: formData.patientName,
-            service: this.serviceList[0]?.name,
-            service_code: this.serviceList[0]?.code,
+            service_code: [this.serviceList[0]?.code],
           },
         ],
       },
@@ -299,7 +322,7 @@ export class ScheduleCalendarComponent implements OnInit {
       })
       .subscribe((res: any) => {
         console.log(res.data);
-        
+
         if (res.status === 1 && res.data?.length) {
           const applicant = res.data[0];
           const applicantNumber = applicant.applicant_number;
@@ -315,6 +338,7 @@ export class ScheduleCalendarComponent implements OnInit {
 
             const message = `✅ Applicant ${applicantNumber} booked on ${bookedDate} at ${bookedTime}`;
             this.toastr.success(message, 'Booking Successful');
+            this.dialogRef.close();
           } else if (appointments.errors.length > 0) {
             this.toastr.error(
               'Some appointment bookings failed.',
@@ -350,17 +374,21 @@ export class ScheduleCalendarComponent implements OnInit {
 
   onContactInput(event: any, controlName: string) {
     let input = event.target.value;
+
     input = input.replace(/\D/g, ''); // Remove non-digits
     if (input.length > 10) {
       input = input.substring(0, 10);
     }
+
+    console.log(input);
+
     this.appointmentForm
       .get(controlName)
       ?.setValue(input, { emitEvent: false });
   }
 
   formatTime(date: Date): string {
-    return date.toTimeString().slice(0, 5); // "HH:MM"
+    return date.toTimeString().slice(0, 5);
   }
 
   processSlots(data: any[]) {
@@ -441,6 +469,11 @@ export class ScheduleCalendarComponent implements OnInit {
   onDayClick(day: Date): void {
     if (this.isPastDay(day)) {
       return; // do nothing
+    }
+
+    if (!this.selectedCenterCode) {
+      this.toastr.warning('Select center');
+      return;
     }
     this.selectDate(day);
   }
@@ -543,6 +576,8 @@ export class ScheduleCalendarComponent implements OnInit {
   //   });
   // }
   bookTimeSlot(slot: any, templateRef: TemplateRef<any>) {
+    this.appointmentForm.reset();
+    this.stepIndex = 0;
     if (this.bookingType === 'family') {
       const exists = this.selectedSlots.find(
         (s) => s.time === slot.time && s.date === slot.date
@@ -553,9 +588,6 @@ export class ScheduleCalendarComponent implements OnInit {
         this.selectedSlots.push(slot);
       }
     } else {
-      // For self booking
-      console.log(slot);
-
       this.selectedslot = slot;
       this.dialogRef = this.dialog.open(templateRef, {
         width: '600px',
@@ -665,8 +697,6 @@ export class ScheduleCalendarComponent implements OnInit {
           return;
         }
 
-        const formData = new FormData();
-        formData.append('application', '1');
         this.http
           .get(environment.AVAILABLE_CENTER_API, {
             headers: { Authorization: `Bearer ${token}` },
@@ -675,22 +705,6 @@ export class ScheduleCalendarComponent implements OnInit {
             this.AvailCenter = res.data;
             console.log('Centers:', this.AvailCenter);
           });
-
-        fetch(environment.AVAILABLE_SLOTS_API, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data.data);
-            this.timeSlots = data.data;
-            this.parseTimeSlotsFromData(this.timeSlots);
-            this.processSlots(this.slots1); // Optional
-          })
-          .catch((err) => {});
       },
       (tokenError: HttpErrorResponse) => {}
     );
