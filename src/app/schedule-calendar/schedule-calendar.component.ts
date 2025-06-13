@@ -1,6 +1,14 @@
 // calendar.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, TemplateRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  TemplateRef,
+  ElementRef,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -11,6 +19,7 @@ import {
   FormGroup,
   FormControl,
   Validators,
+  FormArray,
 } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -153,8 +162,11 @@ export class ScheduleCalendarComponent implements OnInit {
       passportNo: ['', Validators.required],
       paymentPreference: [''],
       TransactionId: '',
-      dob: [''],
+      dob: ['', Validators.required],
       payment_method: 'QR',
+      servicecode: this.fb.control([], Validators.required),
+      memberCount: [0],
+      familyMembers: this.fb.array([]),
     });
   }
   timeSlots: any[] = [];
@@ -174,7 +186,185 @@ export class ScheduleCalendarComponent implements OnInit {
   serviceList: any[] = [];
   today: string = new Date().toISOString().split('T')[0];
 
+  dropdownOpen = false;
+  @ViewChild('dropdownWrapper') dropdownWrapper!: ElementRef;
+
+  toggleServiceDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.dropdownWrapper?.nativeElement.contains(
+      event.target
+    );
+    if (!clickedInside) {
+      this.dropdownOpen = false;
+    }
+  }
+
+  createFamilyMember(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      age: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+      gender: ['', Validators.required],
+      passportNo: ['', Validators.required],
+      hapId: [''],
+      dob: ['', Validators.required],
+    });
+  }
+
+  get familyMembers(): FormArray {
+    return this.appointmentForm.get('familyMembers') as FormArray;
+  }
+
+  generateFamilyMemberRows(count: number): void {
+    this.familyMembers.clear();
+    for (let i = 0; i < count; i++) {
+      this.familyMembers.push(this.createFamilyMember());
+    }
+  }
+  familySlotAssignments: { time: string }[] = [];
+
+  assignFamilyMembersToSlots(): void {
+    const count = this.appointmentForm.get('memberCount')?.value;
+    const selectedDate = this.selectedDate;
+
+    if (!count || !selectedDate) return;
+
+    const matchingSlots = this.timeSlots.filter(
+      (slot) => slot.slot.date === selectedDate && slot.slot.slottime?.length
+    );
+
+    const flatTimeSlots = matchingSlots
+      .flatMap((slot) =>
+        slot.slot.slottime.map((time: any) => ({
+          start_time: time.start_time,
+          end_time: time.end_time,
+          remaining: time.remaining,
+        }))
+      )
+      .filter((slot) => slot.remaining > 0);
+
+    const assignedSlots: any[] = [];
+
+    let membersLeft = count;
+    for (const slot of flatTimeSlots) {
+      const canAssign = Math.min(slot.remaining, membersLeft);
+      for (let i = 0; i < canAssign; i++) {
+        assignedSlots.push({
+          time: `${slot.start_time} - ${slot.end_time}`,
+        });
+      }
+      membersLeft -= canAssign;
+      if (membersLeft <= 0) break;
+    }
+
+    if (membersLeft > 0) {
+      this.toastr.error(
+        `Only ${
+          count - membersLeft
+        } members could be assigned to available slots`
+      );
+    }
+
+    console.log('Assigned:', assignedSlots);
+
+    // Example: you can use this to display slots next to each member form row
+    this.familySlotAssignments = assignedSlots;
+  }
+
+  onMemberCountChange(): void {
+    const count = this.appointmentForm.get('memberCount')?.value;
+    if (!isNaN(count) && count > 0) {
+      this.generateFamilyMemberRows(count);
+      this.assignFamilyMembersToSlots();
+    } else {
+      this.familyMembers.clear();
+    }
+  }
+
+  closeDropdown() {
+    setTimeout(() => {
+      this.dropdownOpen = false;
+    }, 200); // allow checkbox click before closing
+  }
+
+  getSelectedServiceNames(): string {
+    const selected = this.appointmentForm.get('servicecode')?.value || [];
+    return this.serviceList
+      .filter((s) => selected.includes(s.code))
+      .map((s) => s.name)
+      .join(', ');
+  }
+
+  onFocusOut(event: FocusEvent) {
+    // Delay dropdown close to allow checkbox click
+    setTimeout(() => {
+      const active = document.activeElement as HTMLElement;
+      const parent = (event.currentTarget as HTMLElement)?.parentElement;
+      if (!parent?.contains(active)) {
+        this.dropdownOpen = false;
+      }
+    }, 150);
+  }
+
+  isSelected1(code: string): boolean {
+    return (this.appointmentForm.get('servicecode')?.value || []).includes(
+      code
+    );
+  }
+
+  isAllSelected(): boolean {
+    const selected = this.appointmentForm.get('servicecode')?.value || [];
+    return selected.length === this.serviceList.length;
+  }
+  toggleSelectAll(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const allCodes = this.serviceList.map((s) => s.code);
+    this.appointmentForm
+      .get('servicecode')
+      ?.setValue(isChecked ? allCodes : []);
+  }
+  totalServicePrice: number = 0;
+
+  onServiceCheckboxChange(event: Event, code: string): void {
+    const selectedServices =
+      this.appointmentForm.get('servicecode')?.value || [];
+    const checkbox = event.target as HTMLInputElement;
+
+    if (checkbox.checked) {
+      if (!selectedServices.includes(code)) {
+        selectedServices.push(code);
+      }
+    } else {
+      const index = selectedServices.indexOf(code);
+      if (index !== -1) {
+        selectedServices.splice(index, 1);
+      }
+    }
+
+    // ✅ Update the form control
+    this.appointmentForm.get('servicecode')?.setValue([...selectedServices]);
+    this.appointmentForm.get('servicecode')?.markAsTouched();
+
+    console.log(selectedServices);
+
+    // ✅ Calculate total price
+    this.totalServicePrice = selectedServices.reduce(
+      (total: number, code: string) => {
+        const service = this.serviceList.find((s) => s.code === code);
+        return total + Number(service?.price || 0);
+      },
+      0
+    );
+
+    console.log('Selected services:', selectedServices);
+    console.log('Total Price:', this.totalServicePrice);
+  }
+
   ngOnInit() {
+    console.log(this.appointmentForm);
     console.log('timeSlots:', this.timeSlots);
     this.parseTimeSlotsFromData(this.timeSlots); // <-- Add this
     this.processSlots(this.slots1); // You can remove this if not needed
@@ -182,13 +372,43 @@ export class ScheduleCalendarComponent implements OnInit {
       adults: [''],
       children: [''],
     });
-    // this.bookedEvents = [
-    //   { date: '2025-06-15', title: 'Meeting', timeSlot: '11:00 AM' },
-    //   { date: '2025-06-20', title: 'Appointment', timeSlot: '03:00 PM' },
-    // ];
+    this.appointmentForm
+      .get('dob')
+      ?.valueChanges.subscribe((dobStr: string) => {
+        if (dobStr) {
+          const dob = new Date(dobStr);
+          const today = new Date();
+          let age = today.getFullYear() - dob.getFullYear();
+          const m = today.getMonth() - dob.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+            age--;
+          }
+          this.appointmentForm.get('age')?.setValue(age, { emitEvent: false });
+        }
+      });
+
+    this.appointmentForm
+      .get('age')
+      ?.valueChanges.subscribe((ageVal: string) => {
+        const age = parseInt(ageVal, 10);
+        if (!isNaN(age) && ageVal.length <= 3) {
+          const today = new Date();
+          const birthYear = today.getFullYear() - age;
+          const dob = new Date(birthYear, 0, 1); // 01 Jan birth year
+          const dobStr = this.formatDate1(dob);
+          this.appointmentForm
+            .get('dob')
+            ?.setValue(dobStr, { emitEvent: false });
+        }
+      });
     this.getAvailableSlots();
   }
-
+  formatDate1(date: Date): string {
+    const yyyy = date.getFullYear();
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dd = date.getDate().toString().padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
   stepIndex = 0;
   selectedCenterCode: string = '';
   cancelapptmodal() {
@@ -232,6 +452,7 @@ export class ScheduleCalendarComponent implements OnInit {
       })
       .catch((err) => {});
   }
+  today1 = new Date().toISOString().split('T')[0]; // "2025-06-13"
 
   nextStep() {
     const form = this.appointmentForm;
@@ -242,7 +463,7 @@ export class ScheduleCalendarComponent implements OnInit {
       'passportNo',
       'email',
       'contactNumber',
-      'dob',
+      // 'dob',
     ];
     const missing = requiredFields.filter((field) => {
       const control = form.get(field);
@@ -259,6 +480,10 @@ export class ScheduleCalendarComponent implements OnInit {
     if (this.stepIndex > 0) {
       this.stepIndex--;
     }
+  }
+  formatDate(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-'); // '2025-06-13'
+    return `${day}-${month}-${year}`; // '13-06-2025'
   }
 
   onSubmit() {
@@ -279,6 +504,75 @@ export class ScheduleCalendarComponent implements OnInit {
     }
     console.log(this.serviceList[0]);
 
+    [
+    {
+        "type": "I",
+        "applicant_number": "",
+        "fullname": "test4",
+        "email": "fsdev4@stemzglobal.com",
+        "contact_number": "+919566755827",
+        "alt_number": "+919569755427",
+        "hap_id": "14254845486",
+        "relationship": "Self",
+        "reference_applicant_number": "",
+        "passport_number": "A1275574367854657",
+        "dob": "15-06-1999",
+        "gender": "Male",
+        "address": "123 Street, City",
+        "transaction_id":"54342635275468",
+        "payment_method":"QR",
+        "transaction_amt":"100",
+        "center":"NDK",
+        "status": 1,
+        "created_by": 1,
+        "slot_booking": [
+            {
+                "action_date": "2025-06-13",
+                "booked_time": "07:00 PM to 08:00 PM",
+                "booking_from": 3,
+                "booking_status": 1,
+                "date_booked": "2025-06-13",
+                "department": "AU",
+                "description": "Test Service",
+                "service_code":["APPT","LAN"]
+            }
+        ]
+    },
+    {
+        "type": "I",
+        "applicant_number": "",
+        "fullname": "Test5",
+        "email": "fsdev4@stemzglobal.com",
+        "contact_number": "+919566555427",
+        "alt_number": "+919566555427",
+        "hap_id": "14254845486",
+        "relationship": "Child",
+        "reference_applicant_number": "",
+        "passport_number": "A825879543896557",
+        "dob": "15-06-1999",
+        "gender": "Male",
+        "address": "123 Street, City",
+        "transaction_id":"5434263527468",
+        "payment_method":"QR",
+        "transaction_amt":"100",
+        "status": 1,
+        "created_by": 1,
+         "center":"NDK",
+        "slot_booking": [
+            {
+                "action_date": "2025-06-13",
+                "booked_time": "07:00 PM to 08:00 PM",
+                "booking_from": 3,
+                "booking_status": 1,
+                "date_booked": "2025-06-13",
+                "department": "AU",
+                "description": "Test Service",
+                "service_code": ["APPT","LAN"]
+            }
+        ]
+    }
+]
+
     var finalDtaa = [
       {
         type: 'I',
@@ -288,16 +582,16 @@ export class ScheduleCalendarComponent implements OnInit {
         contact_number: formData.contactNumber,
         alt_number: formData.alternativeNumber,
         hap_id: formData.hapId,
-        relationship: this.bookingType,
+        relationship: "Self",
         reference_applicant_number: '',
         passport_number: formData.passportNo,
-        dob: formData.dob,
+        dob: this.formatDate(formData.dob),
         gender: formData.gender,
         address: '123 Street, City',
         transaction_id: formData.TransactionId,
         payment_method: formData.payment_method,
         transaction_amt: this.serviceList[0]?.price,
-
+        center:this.selectedCenterCode,
         status: 1,
         created_by: 1,
         slot_booking: [
@@ -309,7 +603,7 @@ export class ScheduleCalendarComponent implements OnInit {
             date_booked: formatISOToYYYYMMDD(this.selectedslot?.date),
             department: this.serviceList[0]?.department?.name,
             description: this.serviceList[0]?.description,
-            service_code: [this.serviceList[0]?.code],
+            service_code: formData.servicecode,
           },
         ],
       },
@@ -323,7 +617,7 @@ export class ScheduleCalendarComponent implements OnInit {
       .subscribe((res: any) => {
         console.log(res.data);
 
-        if (res.status === 1 && res.data?.length) {
+        if (res.appointments.status === "success" && res.data?.length) {
           const applicant = res.data[0];
           const applicantNumber = applicant.applicant_number;
           const appointments = applicant.appointments;
@@ -475,13 +769,22 @@ export class ScheduleCalendarComponent implements OnInit {
       this.toastr.warning('Select center');
       return;
     }
-    this.selectDate(day);
+    if (this.bookingType === 'self') {
+      this.selectDate(day);
+    } else if (this.bookingType === 'family') {
+      this.assignFamilyMembersToSlots();
+    }
   }
 
   onBookingTypeChange(event: any) {
     this.bookingType = event.target.value;
-    this.selectedFamilyMembers = 0;
-    this.selectedSlots = [];
+    if (event.target.value === 'family') {
+      this.appointmentForm.reset();
+      this.upcomingDatesWithSlots = [];
+    } else {
+      this.selectedFamilyMembers = 0;
+      this.selectedSlots = [];
+    }
   }
   isCurrentMonth(date: Date): boolean {
     return date.getMonth() === this.currentDate.getMonth();
@@ -576,7 +879,25 @@ export class ScheduleCalendarComponent implements OnInit {
   //   });
   // }
   bookTimeSlot(slot: any, templateRef: TemplateRef<any>) {
-    this.appointmentForm.reset();
+    const servicecode = this.appointmentForm.get('servicecode')?.value || [];
+
+    this.appointmentForm.reset({
+      patientName: '',
+      hapId: '',
+      email: '',
+      contactNumber: '',
+      alternativeNumber: '',
+      gender: '',
+      age: '',
+      visaCategory: '',
+      passportNo: '',
+      paymentPreference: '',
+      TransactionId: '',
+      dob: '',
+      payment_method: 'QR',
+      servicecode: servicecode,
+    });
+
     this.stepIndex = 0;
     if (this.bookingType === 'family') {
       const exists = this.selectedSlots.find(
