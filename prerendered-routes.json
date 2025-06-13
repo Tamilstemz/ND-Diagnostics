@@ -1,0 +1,8 @@
+{
+  "routes": {
+    "/ND-Diagnostics": {},
+    "/ND-Diagnostics/BookAppointment": {},
+    "/ND-Diagnostics/PrivacyPolicy": {},
+    "/ND-Diagnostics/TermsOfUse": {}
+  }
+}
