@@ -1,0 +1,70 @@
+#terms-of-use {
+  padding-top: 140px;
+  background-color: #f9f9f9;
+}
+
+#terms-of-use .container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Headers LEFT aligned */
+#terms-of-use h2,
+#terms-of-use h4 {
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+}
+
+/* Content CENTER aligned */
+#terms-of-use p,
+#terms-of-use a,
+#terms-of-use em {
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* Lists LEFT aligned */
+#terms-of-use ul {
+  text-align: left;
+  padding-left: 1.5rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#terms-of-use ul li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Link Styling */
+#terms-of-use a {
+  color: #007BFF;
+  text-decoration: underline;
+}
+
+/* Emphasis Styling */
+#terms-of-use em {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #terms-of-use .container {
+    padding: 15px;
+  }
+
+  #terms-of-use ul {
+    padding-left: 1rem;
+  }
+
+  #terms-of-use p {
+    text-align: justify; /* Optional: better reading on mobile */
+  }
+}

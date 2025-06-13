@@ -3,6 +3,7 @@
   position: relative;
   height: 310px;
   overflow: visible;
+  z-index: -1;
 }
 
 /* ==== Fixed Background Image ==== */
