@@ -80,61 +80,195 @@
       </div>
     </div>
     <div class="time-slot-panel">
-      <div style="display: flex; flex-direction: column; gap: 5px">
-        <label
-          style="
-            width: 100px;
-            display: flex;
-            /* flex-direction: row; */
-            align-items: center;
-            justify-content: space-between;
-            margin-left: 5px;
-          "
-          >Select Center <span>:</span></label
-        >
-        <select
-          style="
-            padding: 5px;
-            border: 1px solid lightgrey;
-            border-radius: 5px;
-            outline: 1px solid #49beff3b;
-          "
-          (change)="onCenterChange($event)"
-        >
-          <option value="">Select</option>
+      <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+        <div style="display: flex; flex-direction: row; gap: 5px">
+          <label
+            style="
+              width: 100px;
+              display: flex;
+              /* flex-direction: row; */
+              align-items: center;
+              justify-content: space-between;
+              margin-left: 5px;
+            "
+            >Select Center <span>:</span></label
+          >
+          <select
+            style="
+              padding: 5px;
+              border: 1px solid lightgrey;
+              border-radius: 5px;
+              outline: 1px solid #49beff3b;
+            "
+            (change)="onCenterChange($event)"
+          >
+            <option value="">Select</option>
 
-          <option *ngFor="let center of AvailCenter" [value]="center.code">
-            {{ center.name }}
-          </option>
-        </select>
+            <option *ngFor="let center of AvailCenter" [value]="center.code">
+              {{ center.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Wrapper styled like a select -->
+        <!-- Make sure this wraps both the trigger and the dropdown -->
+        <div style="display: flex; gap: 10px">
+          <label
+            style="
+              width: 100px;
+              display: flex;
+              /* flex-direction: row; */
+              align-items: center;
+              justify-content: space-between;
+              margin-left: 5px;
+            "
+            >Select Service <span>:</span></label
+          >
+          <div style="position: relative; width: 18rem" #dropdownWrapper>
+            <!-- Trigger -->
+
+            <div
+              class="custom-select"
+              style="
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding: 6px 10px;
+                border: 1px solid lightgrey;
+                border-radius: 5px;
+                cursor: pointer;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-sizing: border-box;
+              "
+              (click)="toggleServiceDropdown()"
+            >
+              {{ getSelectedServiceNames() || "Select Service" }}
+              <span class="arrow">&#9662;</span>
+            </div>
+            <div
+              class="dropdown-options"
+              *ngIf="dropdownOpen"
+              style="
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                max-height: 300px;
+                overflow-y: auto;
+                box-sizing: border-box;
+                z-index: 999;
+              "
+            >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: flex-start;
+                  gap: 10px;
+                "
+              >
+                <input
+                  type="checkbox"
+                  [disabled]="bookingType === 'family'"
+                  [checked]="isAllSelected()"
+                  (change)="toggleSelectAll($event)"
+                />
+                Select All
+              </label>
+
+              <div *ngFor="let service of serviceList">
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 10px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    [disabled]="bookingType === 'family'"
+                    [checked]="isSelected1(service.code)"
+                    (change)="onServiceCheckboxChange($event, service.code)"
+                  />
+                  <span>{{ service.name }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; padding: 10px">
+        <label>
+          <input
+            type="radio"
+            name="bookingFor"
+            value="self"
+            [checked]="bookingType === 'self'"
+            (change)="onBookingTypeChange($event)"
+          />
+          Self
+        </label>
+
+        <label style="margin-left: 20px">
+          <input
+            type="radio"
+            name="bookingFor"
+            value="family"
+            [checked]="bookingType === 'family'"
+            (change)="onBookingTypeChange($event)"
+          />
+          Group
+        </label>
+      </div>
+
+      <div *ngIf="bookingType === 'family'" style="margin-top: 20px">
+        <div style="display: flex; gap: 10px; align-items: center">
+          <label style="width: 150px">Member Count:</label>
+          <form [formGroup]="appointmentForm">
+            <input
+              type="number"
+              min="1"
+              formControlName="memberCount"
+              (input)="onMemberCountChange()"
+              style="width: 100px"
+            />
+          </form>
+        </div>
+
+        <div
+          formArrayName="familyMembers"
+          *ngIf="familyMembers.controls.length"
+        >
+          <div
+            *ngFor="let member of familyMembers.controls; let i = index"
+            [formGroupName]="i"
+            style="display: flex; gap: 10px; margin: 10px 0"
+          >
+            <input placeholder="Name" formControlName="name" />
+            <input placeholder="Age" formControlName="age" />
+            <select formControlName="gender" aria-placeholder="Gender">
+              <option disabled value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <input placeholder="Passport No" formControlName="passportNo" />
+            <input placeholder="HAP ID" formControlName="hapId" />
+            <input type="date" formControlName="dob" />
+          </div>
+        </div>
       </div>
 
       <div *ngIf="selectedDate">
-        <div style="display: flex; align-items: center; padding: 10px">
-          <label>
-            <input
-              type="radio"
-              name="bookingFor"
-              value="self"
-              [checked]="bookingType === 'self'"
-              (change)="onBookingTypeChange($event)"
-            />
-            Self
-          </label>
-
-          <label style="margin-left: 20px">
-            <input
-              type="radio"
-              name="bookingFor"
-              value="family"
-              [checked]="bookingType === 'family'"
-              (change)="onBookingTypeChange($event)"
-            />
-            Group
-          </label>
-        </div>
-
-        <form
+        <!-- <form
           [formGroup]="familyForm"
           *ngIf="bookingType === 'family'"
           style="display: flex; gap: 20px; padding: 10px"
@@ -162,7 +296,8 @@
               </option>
             </select>
           </div>
-        </form>
+        </form> -->
+
         <div
           *ngFor="let dateGroup of upcomingDatesWithSlots"
           style="
@@ -355,7 +490,7 @@
                   type="date"
                   matInput
                   formControlName="dob"
-                  [max]="today"
+                  [max]="today1"
                 />
               </div>
 
@@ -411,7 +546,7 @@
               "
             >
               <div>
-                <div
+                <!-- <div
                   style="
                     display: flex;
                     align-items: center;
@@ -429,7 +564,7 @@
                     "
                     >Service <span>:</span> </label
                   ><span style="padding: 5px">{{ serviceList[0].name }}</span>
-                </div>
+                </div> -->
                 <div
                   style="
                     display: flex;
@@ -447,7 +582,7 @@
                       display: flex;
                     "
                     >Price <span>:</span></label
-                  ><span style="padding: 5px">{{ serviceList[0].price }}</span>
+                  ><span style="padding: 5px">₹ {{ totalServicePrice }}</span>
                 </div>
                 <div style="margin-top: 20px">
                   <label>Enter Transaction ID:</label>
