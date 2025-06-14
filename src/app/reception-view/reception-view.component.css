@@ -6,7 +6,7 @@
   z-index: -1;
 }
 
-/* ==== Fixed Background Image ==== */
+
 .parallax-image {
   background-image: url('/assets/reception1.png');
   background-position: 50% 50%;
